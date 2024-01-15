@@ -116,9 +116,14 @@ class Text(GameObject):
         self.text = ""
         self.mark_as_to_update = False
         self.color = color
+        self.line_spacing = 10
     
     def update_text(self):
         self.mark_as_to_update = True
         self.transform.force_update()
+    
+    def set_update(self, text: str):
+        self.text = text
+        self.update_text()
     
 
