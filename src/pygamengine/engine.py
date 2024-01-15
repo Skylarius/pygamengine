@@ -140,7 +140,6 @@ class PygameObject(pygame.sprite.DirtySprite):
 class PyGameNgine(metaclass=Singleton):
     def __init__(self) -> None:
         self.tick_time = 60
-        self.display = (1280, 720)
         self.__pygameobjects = list[PygameObject]()
         self.__pygameobjects_marked_for_deletion = list[PygameObject]()
         self.__collidable_objects = list[PygameObject]()
@@ -148,19 +147,24 @@ class PyGameNgine(metaclass=Singleton):
         pygame.init()
         self.__clock = pygame.time.Clock()
         # flags = FULLSCREEN | DOUBLEBUF
-        flags = DOUBLEBUF
-        self.__screen = pygame.display.set_mode(self.display, flags, 16)
-
-        # Create The Backgound
-        self.__background = pygame.Surface(self.__screen.get_size())
-        r = self.__background.get_rect()
-        self.__background.convert()
-        self.__background.fill(0)
+        
+        self.set_display(1280, 720)
 
         # Start CoroutineSystem
         self.__coroutine_system = CoroutineSystem()
 
         self.setup_event_system()
+    
+    def set_display(self, x: int, y: int):
+        # Create The Backgound
+        flags = DOUBLEBUF
+        # flags = FULLSCREEN | DOUBLEBUF
+        self.display = x, y
+        self.__screen = pygame.display.set_mode(self.display, flags, 16)
+        self.__background = pygame.Surface(self.__screen.get_size())
+        r = self.__background.get_rect()
+        self.__background.convert()
+        self.__background.fill(0)
     
     def setup_event_system(self):
         event_system = EventSystem()
