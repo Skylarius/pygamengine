@@ -84,7 +84,7 @@ class GameObject:
         self.collider.set_collision(self, condition)
 
     def is_collider_enabled(self) -> False:
-        return self.collider.enabled
+        return self.collider.is_enabled()
 
     def on_collision(self, other: GameObject):
         pass

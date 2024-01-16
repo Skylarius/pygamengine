@@ -10,13 +10,15 @@ class TetrisBlock(Rectangle):
     grid_step = 30
     move_time = 1
     
-    def __init__(self, color=(255,255,255,255), fake=False) -> None:
-        super().__init__("block", TetrisBlock.grid_step, TetrisBlock.grid_step, color)
+    def __init__(self, name="block", color=(255,255,255,255), fake=False) -> None:
+        super().__init__(name, TetrisBlock.grid_step, TetrisBlock.grid_step, color)
         self.transform.set_position((Ngine.display[0]/2, TetrisBlock.grid_step))
         self.block_position = (0,0)
         self.fake = fake
-        self.set_collision(False)
         Blocks.append(self)
+    
+    def start(self):
+        self.set_collision(False)
     
     def set_block_position(self, x: int, y: int):
         self.block_position = x,y
@@ -93,15 +95,18 @@ class BlocksSet(GameObject):
         }
     NextChoice = 'Z' # it will be overwritten
     
-    def __init__(self, color=(255,255,255,255)) -> None:
-        super().__init__("BlockSet")
+    def __init__(self, name="blockSet", color=(255,255,255,255), color_name="color") -> None:
+        super().__init__(name)
         self.blocks = list[TetrisBlock]()
         self.color = color
+        self.color_name = color_name
         self.time = time.perf_counter()
         self.new_block()
-        self.set_collision(False)
         self.rotations_positions = []
         self.rotation_index = 0
+    
+    def start(self):
+        self.set_collision(False)
     
     def left(self):
         if not self.can_move(-1,0):
@@ -157,7 +162,7 @@ class BlocksSet(GameObject):
         return True
     
     def new_block(self) -> TetrisBlock:
-        block = TetrisBlock(self.color)
+        block = TetrisBlock(self.color_name + "_block", self.color)
         Ngine.create_new_gameobject(block)
         self.blocks.append(block)
         return block
@@ -262,8 +267,8 @@ class BlocksSet(GameObject):
                 
 
 class T(BlocksSet):
-    def __init__(self, color=(204, 102, 255, 255)) -> None:
-        super().__init__(color)
+    def __init__(self) -> None:
+        super().__init__(name="blockset_T", color=(204, 102, 255, 255), color_name="purple")
         self.new_block().move_left()
         self.new_block().move_right()
         self.new_block().move_down()
@@ -277,8 +282,8 @@ class T(BlocksSet):
         ]
 
 class J(BlocksSet):
-    def __init__(self, color=(0, 0, 255, 255)) -> None:
-        super().__init__(color)
+    def __init__(self) -> None:
+        super().__init__(name="blockset_J", color=(0, 0, 255, 255), color_name="blue")
         self.new_block().move_left()
         self.new_block().move_up()
         self.new_block().move_up().move_up()
@@ -290,8 +295,8 @@ class J(BlocksSet):
         ]
 
 class Z(BlocksSet):
-    def __init__(self, color=(255, 0, 0, 255)) -> None:
-        super().__init__(color)
+    def __init__(self) -> None:
+        super().__init__(name="blockset_Z", color=(255, 0, 0, 255), color_name="red")
         self.new_block().move_right()
         self.new_block().move_right().move_down()
         self.new_block().move_right().move_down().move_right()
@@ -301,15 +306,15 @@ class Z(BlocksSet):
         ]
         
 class O(BlocksSet):
-    def __init__(self, color=(255, 255, 0, 255)) -> None:
-        super().__init__(color)
+    def __init__(self) -> None:
+        super().__init__(name="blockset_O", color=(255, 255, 0, 255), color_name="yellow")
         self.new_block().move_right()
         self.new_block().move_down()
         self.new_block().move_right().move_down()
 
 class S(BlocksSet):
-    def __init__(self, color=(0, 255, 0, 255)) -> None:
-        super().__init__(color)
+    def __init__(self) -> None:
+        super().__init__(name="blockset_S", color=(0, 255, 0, 255), color_name="green")
         self.new_block().move_left()
         self.new_block().move_left().move_down()
         self.new_block().move_left().move_down().move_left()
@@ -319,8 +324,8 @@ class S(BlocksSet):
         ]
     
 class L(BlocksSet):
-    def __init__(self, color=(204, 102, 0, 255)) -> None:
-        super().__init__(color)
+    def __init__(self) -> None:
+        super().__init__(name="blockset_L", color=(204, 102, 0, 255), color_name="orange")
         self.new_block().move_right()
         self.new_block().move_up()
         self.new_block().move_up().move_up()
@@ -332,8 +337,8 @@ class L(BlocksSet):
         ]
 
 class I(BlocksSet):
-    def __init__(self, color=(170, 216, 230, 255)) -> None:
-        super().__init__(color)
+    def __init__(self) -> None:
+        super().__init__(name="blockset_I", color=(170, 216, 230, 255), color_name="white")
         self.new_block().move_up()
         self.new_block().move_up().move_up()
         self.new_block().move_up().move_up().move_up()
