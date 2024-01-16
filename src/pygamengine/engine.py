@@ -188,6 +188,8 @@ class PyGameNgine(metaclass=Singleton):
             if pygameobject_of_event is None:
                 raise GameObjectNotFoundError("Couldn't find Pygameobject passed on this event as GameObject")
             for pygameobject in self.__pygameobjects:
+                if not pygameobject.gameobject.is_collider_enabled():
+                    continue
                 if not pygameobject.is_collider_ignored(pygameobject_of_event):
                     logging.debug(f"Filtered collidable cache invalidated for {pygameobject.gameobject}")
                     pygameobject.invalidate_filtered_collidable_objects_cache()
