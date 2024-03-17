@@ -55,32 +55,6 @@ class TetrisBlock(Rectangle):
 
 Blocks = list[TetrisBlock]()
 
-class TetrisInfo(Text):
-    def __init__(self, name="info") -> None:
-        super().__init__(name, color=(0,255,0,255))
-        self.transform.set_position(
-            (Ngine.display[0]*4/5, Ngine.display[1]/2)
-        )
-
-line_spacing = 20
-Score_info = Ngine.create_new_gameobject(TetrisInfo("Score"))
-Probabilities_info = Ngine.create_new_gameobject(TetrisInfo("Probabilities"))
-Probabilities_info.gameobject.move(0, line_spacing)
-Speed_info =  Ngine.create_new_gameobject(TetrisInfo("Speed"))
-Speed_info.gameobject.move(0,2*line_spacing)
-Next_info =  Ngine.create_new_gameobject(TetrisInfo("Next"))
-Next_info.gameobject.move(0,3*line_spacing)
-
-def set_stats_text():
-    Score_info.gameobject.set_update(f"Score {BlocksSet.Score}")
-    p_text = "{"
-    for k, v in BlocksSet.Probabilities.items():
-        p_text+=f"'{k}': {v};"
-    p_text+="}"
-    Probabilities_info.gameobject.set_update(p_text)
-    Speed_info.gameobject.set_update(f"Speed {1/(float)(TetrisBlock.move_time):.2f}")
-    Next_info.gameobject.set_update(f"Next '{BlocksSet.NextChoice}'")
-
 class BlocksSet(GameObject):
     
     Score = 0
@@ -107,6 +81,7 @@ class BlocksSet(GameObject):
     
     def start(self):
         self.set_collision(False)
+        set_stats_text()
     
     def left(self):
         if not self.can_move(-1,0):
@@ -179,7 +154,6 @@ class BlocksSet(GameObject):
                         return
                 BlocksSet.instance_new_random_blocks_set()
                 Ngine.destroy(self)
-                set_stats_text()
                 return
             else:
                 self.time = time.perf_counter()
@@ -346,6 +320,37 @@ class I(BlocksSet):
             [(1, 0), (2, 0), (3, 0)],
             [(0 , -1), (0, -2), (0, -3)],
         ]
+
+class TetrisInfo(Text):
+    def __init__(self, name="info") -> None:
+        super().__init__(name, color=(0,255,0,255))
+        self.transform.set_position(
+            (Ngine.display[0]*4/5, Ngine.display[1]/2)
+        )
+
+line_spacing = 20
+i = 1
+Score_info = Ngine.create_new_gameobject(TetrisInfo("Score"))
+Probabilities_info = {}
+for k, _ in BlocksSet.Probabilities.items():
+    tetris_info = TetrisInfo(f"Probabilities_{k}")
+    Ngine.create_new_gameobject(tetris_info)
+    tetris_info.move(0, i*line_spacing)
+    Probabilities_info[k] = tetris_info
+    i+=1
+Speed_info =  Ngine.create_new_gameobject(TetrisInfo("Speed"))
+Speed_info.gameobject.move(0, i*line_spacing)
+i+=1
+Next_info =  Ngine.create_new_gameobject(TetrisInfo("Next"))
+i+=1
+Next_info.gameobject.move(0, i*line_spacing)
+
+def set_stats_text():
+    Score_info.gameobject.set_update(f"Score {BlocksSet.Score}")
+    for k, v in BlocksSet.Probabilities.items():
+        Probabilities_info[k].set_update(f"{k} : {v}")
+    Speed_info.gameobject.set_update(f"Speed {1/(float)(TetrisBlock.move_time):.2f}")
+    Next_info.gameobject.set_update(f"Next '{BlocksSet.NextChoice}'")
 
 if __name__ == "__main__":
     # Set frame
