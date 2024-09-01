@@ -24,7 +24,6 @@ setup(
     long_description=readme,
     author='Ilario Gerloni',
     license=license,
-    install_requires=requirements,
-    packages=find_packages(where='./src', exclude=('tests', 'docs'))
+    install_requires=requirements
 )
 
