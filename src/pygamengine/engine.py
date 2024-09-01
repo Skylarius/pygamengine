@@ -33,12 +33,14 @@ class PygameObject(pygame.sprite.DirtySprite):
         # Tick
         self.gameobject.tick()
 
-        # Handle texts
-        if isinstance(self.gameobject, Text) and self.gameobject.mark_as_to_update:
-            txt: Text = self.gameobject
-            self.image = txt.font.render(txt.text, False, txt.color)
+        if self.gameobject.mark_as_to_update:
+            if isinstance(self.gameobject, Text):
+                txt: Text = self.gameobject
+                self.image = txt.font.render(txt.text, False, txt.color)
+            else:
+                self.image = pygame.image.load(self.gameobject.sprite)
             self.update_original_image(self.image)
-            txt.mark_as_to_update = False
+            self.mark_as_to_update = False
         
         # Update transforms in game_objects
         self.rect.center = self.gameobject.transform.get_position()
