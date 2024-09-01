@@ -2,7 +2,7 @@
 
 # Learn more: https://github.com/kennethreitz/setup.py
 
-from setuptools import setup, find_packages
+from setuptools import setup
 
 with open('README.md') as f:
     readme = f.read()
@@ -24,8 +24,7 @@ setup(
     long_description=readme,
     author='Ilario Gerloni',
     license=license,
-    packages=['pygamengine'],
     install_requires=requirements,
-    packages=find_packages(exclude=('tests', 'docs'))
+    packages=['pygamengine']
 )
 
