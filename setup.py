@@ -4,12 +4,18 @@
 
 from setuptools import setup, find_packages
 
-
 with open('README.md') as f:
     readme = f.read()
 
 with open('LICENSE') as f:
     license = f.read()
+
+# NB: requirements.txt and install_requires are not the same.
+# Add here all required dependencies
+requirements = [
+    'nose',
+    'pygame'
+    ]
 
 setup(
     name='pygamengine',
@@ -18,6 +24,7 @@ setup(
     long_description=readme,
     author='Ilario Gerloni',
     license=license,
+    install_requires=requirements
     packages=find_packages(exclude=('tests', 'docs'))
 )
 
