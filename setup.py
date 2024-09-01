@@ -24,6 +24,7 @@ setup(
     long_description=readme,
     author='Ilario Gerloni',
     license=license,
+    packages=['pygamengine']
     install_requires=requirements,
     packages=find_packages(exclude=('tests', 'docs'))
 )
