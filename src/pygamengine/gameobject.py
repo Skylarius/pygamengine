@@ -107,6 +107,16 @@ class GameObject:
     def update_sprite(self):
         self.mark_as_to_update = True
         self.transform.force_update()
+    
+    def set_position(self, position : Tuple[float, float]):
+        self.transform.set_position(position)
+    
+    def set_position_lerp(self, position: Tuple[float, float], t: float):
+        self.transform.set_position(
+            Transform.lerp(
+                self.transform.get_position(), position, t
+            )
+        )
 
 class Rectangle(GameObject):
     def __init__(self, name: str, width=10, height=20, color=(240,240,240,255)) -> None:
