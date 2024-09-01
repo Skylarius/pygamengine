@@ -73,6 +73,7 @@ class GameObject:
         self.sprite: str = ""
         self.transform = Transform()
         self.collider = Collider()
+        self.mark_as_to_update = False
     
     def __str__(self) -> str:
         return f"{self.name}, {type(self)}"
@@ -102,6 +103,11 @@ class GameObject:
         delta = (x, y)
         self.transform.set_position(tuple(map(sum, zip(self.transform.get_position(), delta))))
 
+    '''Update image according to the sprite path (self.sprite)'''
+    def update_sprite(self):
+        self.mark_as_to_update = True
+        self.transform.force_update()
+
 class Rectangle(GameObject):
     def __init__(self, name: str, width=10, height=20, color=(240,240,240,255)) -> None:
         super().__init__(name)
@@ -114,7 +120,6 @@ class Text(GameObject):
         super().__init__(name)
         self.font = None
         self.text = ""
-        self.mark_as_to_update = False
         self.color = color
         self.line_spacing = 10
     
