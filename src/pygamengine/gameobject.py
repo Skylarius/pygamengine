@@ -45,6 +45,7 @@ class Transform:
             return True
         return False
 
+    @staticmethod
     def lerp(A: tuple[float, float], B: tuple[float, float], t: float) -> tuple[float, float]:
         return A[0] + t * (B[0] - A[0]), A[1] + t * (B[1] - A[1])
     
@@ -54,9 +55,11 @@ class Transform:
     """
     Get distance between vector A and B
     """
+    @staticmethod
     def get_vectors_distance(A: tuple[float, float], B: tuple[float, float]) -> tuple[float, float]:
         return B[0] - A[0], B[1] - A[1]
     
+    @staticmethod
     def get_vectors_sum(*vectors: tuple[float, float]):
         sum_x = 0
         sum_y = 0
