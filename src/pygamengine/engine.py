@@ -1,6 +1,7 @@
 from __future__ import annotations
 from typing import Callable
 from .gameobject import GameObject, Rectangle, Text
+from .background import Background
 from .event import EventSystem
 from .custom_events import ColliderEnabledChangedData, ColliderEnabledChangedEventType
 from .custom_events import NewObjectCreated, ObjectDeleted, GameObjectData
@@ -167,6 +168,10 @@ class PyGameNgine(metaclass=Singleton):
         r = self.__background.get_rect()
         self.__background.convert()
         self.__background.fill(0)
+    
+    def set_background(self, background: Background):
+        self.__background.blit(pygame.image.load(background.image_path), (0,0))
+        self.__background.convert()
     
     def setup_event_system(self):
         event_system = EventSystem()
