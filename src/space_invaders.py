@@ -1,7 +1,6 @@
 from pygamengine import *
 import pygame
 import time
-from pygamengine.gameobject import GameObject
 from pygamengine.event import EventSystem
 from pygamengine.custom_events import ObjectDeleted, GameObjectData
 
