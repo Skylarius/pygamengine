@@ -75,7 +75,7 @@ class GameObject:
         self.name = name
         self.sprite: str = ""
         self.transform = Transform()
-        self.collider = Collider()
+        self.collider = Collider(self)
         self.mark_as_to_update = False
     
     def __str__(self) -> str:
@@ -85,7 +85,7 @@ class GameObject:
         self.collider.ignored_colliders.append(object_class)
     
     def set_collision(self, condition: bool):
-        self.collider.set_collision(self, condition)
+        self.collider.set_collision(condition)
 
     def is_collider_enabled(self) -> False:
         return self.collider.is_enabled()
