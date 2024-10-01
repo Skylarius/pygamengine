@@ -6,14 +6,15 @@ if TYPE_CHECKING:
     from .gameobject import GameObject
 
 class Collider:
-    def __init__(self) -> None:
+    def __init__(self, game_object: GameObject) -> None:
+        self.game_object = game_object
         self.__enable = False
         self.size: tuple[2] = (0,0)
         self.ignored_colliders = list[type]()
     
-    def set_collision(self, game_object: GameObject, condition: bool):
+    def set_collision(self, condition: bool):
         self.__enable = condition
-        ColliderEnabledChanged(game_object, condition)
+        ColliderEnabledChanged(self.game_object, condition)
     
     def is_enabled(self):
         return self.__enable
