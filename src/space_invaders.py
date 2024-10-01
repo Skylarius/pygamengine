@@ -114,6 +114,7 @@ class Alien(GameObject):
 
 
 if __name__ == "__main__":
+    Ngine.set_background(Background("src/background/space.jpg"))
     ship = Ship()
     Ngine.create_new_gameobject(ship)
     for i in range(30, int(Ngine.display[0]*2/3) , 150):
