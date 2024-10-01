@@ -1,6 +1,5 @@
 import pygame
 from pygamengine import *
-from pygamengine.gameobject import GameObject, Rectangle, Text
 
 
 class PongObject(Rectangle):

@@ -2,7 +2,6 @@ from pygamengine import *
 from pygamengine.coroutines import WaitSeconds
 import pygame
 import time
-from pygamengine.gameobject import Text
 from typing import Tuple
 import random
 

@@ -6,8 +6,6 @@ import random
 from enum import Enum
 from pygamengine.engine import PygameObject
 
-from pygamengine.gameobject import GameObject
-
 class SnakePart(Rectangle):
     parts_amount = 0
     def __init__(self, name: str) -> None:

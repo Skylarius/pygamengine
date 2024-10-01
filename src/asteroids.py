@@ -1,6 +1,5 @@
 import pygame
 from pygamengine import *
-from pygamengine.gameobject import GameObject, Rectangle
 from math import sin, cos, pi
 from functools import reduce
 from pygamengine.coroutines import RunAfterSeconds
