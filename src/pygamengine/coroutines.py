@@ -85,7 +85,7 @@ class CoroutineSystem(metaclass=Singleton):
             self.__coroutines.remove(ended)
 
 class RunAfterSeconds(Coroutine):
-    def __init__(self, seconds: int, callback: Callable[..., None], *args, **kwds) -> None:
+    def __init__(self, seconds: float, callback: Callable[..., None], *args, **kwds) -> None:
         super().__init__()
         self.__seconds = seconds
         self.__callback = callback
