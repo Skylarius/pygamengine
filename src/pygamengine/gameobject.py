@@ -77,6 +77,8 @@ class GameObject:
         self.transform = Transform()
         self.collider = Collider(self)
         self.mark_as_to_update = False
+        '''NB. use Ngine.update_draw_order to make it effective after updating'''
+        self.draw_order: int = -1
     
     def __str__(self) -> str:
         return f"{self.name}, {type(self)}"

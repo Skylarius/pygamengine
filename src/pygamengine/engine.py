@@ -3,7 +3,7 @@ from typing import Callable
 from .gameobject import GameObject, Rectangle, Text
 from .background import Background
 from .event import EventSystem
-from .custom_events import ColliderEnabledChangedData, ColliderEnabledChangedEventType
+from .custom_events import ColliderEnabledChangedData, ColliderEnabledChangedEventType, ObjectLayerUpdated
 from .custom_events import NewObjectCreated, ObjectDeleted, GameObjectData, CoroutineEnd, CoroutineData
 from .exceptions import GameObjectNotFoundError
 import pygame
@@ -34,11 +34,14 @@ class PygameObject(pygame.sprite.DirtySprite):
         # Tick
         self.gameobject.tick()
 
+        # TODO: replace this if with a function that HAS to be called specifically from the Ngine.
+        # Example: see create_new_object, or update_draw_order, which are NOT called from the object 
+        # but from the Ngine
         if self.gameobject.mark_as_to_update:
             if isinstance(self.gameobject, Text):
                 txt: Text = self.gameobject
                 self.image = txt.font.render(txt.text, False, txt.color)
-            else:
+            elif not isinstance(self.gameobject, Rectangle):
                 self.image = pygame.image.load(self.gameobject.sprite)
             self.update_original_image(self.image)
             self.mark_as_to_update = False
@@ -204,6 +207,7 @@ class PyGameNgine(metaclass=Singleton):
         event_system.subscribe(NewObjectCreated.event_type, invalidate_filtered_collidable_objects_cache_all)
         event_system.subscribe(ObjectDeleted.event_type, invalidate_filtered_collidable_objects_cache_all)
 
+
         def on_coroutine_end(data: CoroutineData):
             #TODO: make something of it in the engine
             logging.debug(f"Coroutine End: {data.get_coroutine()}")
@@ -318,7 +322,13 @@ class PyGameNgine(metaclass=Singleton):
             if pygameobject in self.__collidable_objects:
                 self.remove_collidable(pygameobject)
         self.__pygameobjects_marked_for_deletion.clear()
-                
+    
+    '''Update layer in gameobject. This must be called otherwise the layer change won't be effective'''
+    def update_draw_order(self, gameobject: GameObject):
+        pygameobject = self.__get_pygameobject(gameobject)
+        if pygameobject != None:
+            self.__all_sprites.change_layer(pygameobject, pygameobject.gameobject.draw_order)
+            ObjectLayerUpdated(pygameobject.gameobject)         
     
     def is_in_display(self, position: tuple[2]):
         return 0 < position[0] < self.display[0] and 0 < position[1] < self.display[1]
@@ -336,7 +346,7 @@ class PyGameNgine(metaclass=Singleton):
         # Start infinite loop
         while True:
             # Execute Start and Tick (now using DirtySprite update function)
-            self.__all_sprites.update()            
+            self.__all_sprites.update()
             
             # Draw Everything
             rects = self.__all_sprites.draw(self.__screen)
