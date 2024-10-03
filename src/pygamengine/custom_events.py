@@ -11,6 +11,7 @@ if TYPE_CHECKING:
 ColliderEnabledChangedEventType: EventType = "collider_enabled_changed"
 NewObjectCreatedEventType: EventType = "new_object_created"
 ObjectDeletedEventType: EventType = "object_deleted"
+ObjectLayerUpdatedEventType: EventType = "object_layer_updated"
 CoroutineEndEventType: EventType = "coroutine_end"
 
 '''Collider Events'''
@@ -45,6 +46,11 @@ class ObjectDeleted(Event):
     event_type = ObjectDeletedEventType
     def __init__(self, game_object: GameObject) -> None:
         super().__init__(ObjectDeleted.event_type, GameObjectData(game_object))
+
+class ObjectLayerUpdated(Event):
+    event_type = ObjectLayerUpdatedEventType
+    def __init__(self, game_object: GameObject) -> None:
+        super().__init__(ObjectLayerUpdated.event_type, GameObjectData(game_object))
 
 
 '''Coroutine Events'''
