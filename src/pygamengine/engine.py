@@ -206,13 +206,6 @@ class PyGameNgine(metaclass=Singleton):
         
         event_system.subscribe(NewObjectCreated.event_type, invalidate_filtered_collidable_objects_cache_all)
         event_system.subscribe(ObjectDeleted.event_type, invalidate_filtered_collidable_objects_cache_all)
-
-
-        def on_coroutine_end(data: CoroutineData):
-            #TODO: make something of it in the engine
-            logging.debug(f"Coroutine End: {data.get_coroutine()}")
-
-        event_system.subscribe(CoroutineEnd.event_type, on_coroutine_end)
     
     def game_over(self):
         pygame.quit()
