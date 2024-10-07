@@ -1,5 +1,5 @@
 from pygame import image as pygameimage
-
+from pygame import Surface
 from pygamengine.components.animation.frame import Frame
 
 class Animation:
@@ -66,5 +66,9 @@ class Animation:
             f.flip_image(x, y)
     
     @classmethod
-    def make_single_frame_animation_from_image(cls, name: str, image: pygameimage):
+    def make_single_frame_animation_from_image(cls, name: str, image: Surface):
         return Animation(name, [Frame(image)])
+    
+    @classmethod
+    def make_single_frame_animation_from_sprite(cls, name: str, sprite_path: str):
+        return Animation.make_single_frame_animation_from_image(name, pygameimage.load(sprite_path))
