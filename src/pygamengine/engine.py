@@ -34,6 +34,10 @@ class PygameObject(pygame.sprite.DirtySprite):
         # Tick
         self.gameobject.tick()
 
+        # Execute components actions
+        for component in self.gameobject.components:
+            component.update(self)
+
         # TODO: replace this if with a function that HAS to be called specifically from the Ngine.
         # Example: see create_new_object, or update_draw_order, which are NOT called from the object 
         # but from the Ngine
@@ -138,6 +142,9 @@ class PygameObject(pygame.sprite.DirtySprite):
             if self.is_colliding_with(pyobj2):
                 self.gameobject.on_collision(pyobj2.gameobject)
     
+    def get_original_image(self) -> pygame.Surface:
+        return self.__original_image
+    
     def update_original_image(self, new_image: pygame.Surface):
         self.__original_image = new_image
         self.__original_image.convert()
@@ -155,13 +162,14 @@ class PyGameNgine(metaclass=Singleton):
         # flags = FULLSCREEN | DOUBLEBUF
         
         self.set_display(1280, 720)
+        self.set_background_color(0)
 
         # Start CoroutineSystem
         self.__coroutine_system = CoroutineSystem()
 
         self.setup_event_system()
     
-    def set_display(self, x: int, y: int):
+    def set_display(self, x: int, y: int, color: pygame.Color = 0):
         # Create The Backgound
         flags = DOUBLEBUF
         # flags = FULLSCREEN | DOUBLEBUF
@@ -170,11 +178,13 @@ class PyGameNgine(metaclass=Singleton):
         self.__background = pygame.Surface(self.__screen.get_size())
         r = self.__background.get_rect()
         self.__background.convert()
-        self.__background.fill(0)
     
     def set_background(self, background: Background):
         self.__background.blit(pygame.image.load(background.image_path), (0,0))
         self.__background.convert()
+    
+    def set_background_color(self, color: pygame.Color):
+        self.__background.fill(color)
     
     def setup_event_system(self):
         event_system = EventSystem()
