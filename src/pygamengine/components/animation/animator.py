@@ -26,7 +26,7 @@ class Animator(Component):
         del self._states_animations_dict[state]
 
     def get_all_states(self) -> list[str]:
-        return [k for k, v in self._states_animations_dict]
+        return [k for k in self._states_animations_dict]
 
     def update(self, pygameobject: 'PygameObject'):
         image = pygameobject.get_original_image()
