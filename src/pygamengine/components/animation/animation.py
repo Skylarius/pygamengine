@@ -17,6 +17,11 @@ class Animation:
         self.index = 0
         self._frame_timelaps = 0
         self.build_sequence_indices()
+        '''Cache'''
+        self.__reset_cached_frame()
+    
+    def __reset_cached_frame(self):
+        self.__cached_frame = self._frames[self._sequence[self.index]]
     
     def build_sequence_indices(self, custom_index_sequence: list[int] = []):
         if len(custom_index_sequence) > 0:
@@ -27,9 +32,9 @@ class Animation:
 
     '''Returns the frame at the sequence index'''
     def get_frame(self) -> Frame:
-        return self._frames[self._sequence[self.index]]
+        return self.__cached_frame
     
-    def get_image(self) -> pygameimage:
+    def get_image(self) -> Surface:
         return self.get_frame().image
     
     def get_frame_at_index(self, i: int) -> Frame:
@@ -51,11 +56,15 @@ class Animation:
         del self._frames[index]
         self.build_sequence_indices()
     
-    def play(self) -> 'Animation':
+    '''Play animation. Returns true if frame changed'''
+    def play(self) -> bool:
         self._frame_timelaps+=1
         if (self._frame_timelaps > self.get_frame().duration):
+            previous_index = self.index
             self.index = (self.index + 1) % self.sequence_size
             self._frame_timelaps = 0
+            if previous_index != self.index:
+                self.__reset_cached_frame()
         return self
     
     def flip_frame(self, index: int, x: bool, y: bool):
