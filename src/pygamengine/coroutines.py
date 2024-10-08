@@ -1,7 +1,6 @@
-from typing import Generator
+from typing import Generator, TYPE_CHECKING
 import time
 from .design_patterns import Singleton
-from .custom_events import CoroutineEnd
 from collections.abc import Callable
 
 def generator(n):
@@ -73,16 +72,16 @@ class CoroutineSystem(metaclass=Singleton):
         self.__coroutines.append(c)
     
     def run_coroutines(self):
-        if not self.has_coroutines():
-            return
         ended_coroutines = []
+        if not self.has_coroutines():
+            return ended_coroutines
         for coroutine in self.__coroutines:
             v = next(coroutine(), self.__end_coroutine) #if no next, return self.__end_coroutine, which is the EndCoroutineSignal
             if v == self.__end_coroutine:
-                CoroutineEnd(coroutine)
                 ended_coroutines.append(coroutine)
         for ended in ended_coroutines:
             self.__coroutines.remove(ended)
+        return ended_coroutines
 
 class RunAfterSeconds(Coroutine):
     def __init__(self, seconds: float, callback: Callable[..., None], *args, **kwds) -> None:

@@ -2,6 +2,8 @@ from pygame import image as pygameimage
 from pygame import Surface
 from pygamengine.components.animation.frame import Frame
 
+SINGLE_FRAME = -1
+
 class Animation:
     '''
     Class describing an animation frame.
@@ -65,7 +67,18 @@ class Animation:
             self._frame_timelaps = 0
             if previous_index != self.index:
                 self.__reset_cached_frame()
-        return self
+                return True
+        return False
+    
+    '''Set animation to next frame, return duration of the frame'''
+    def next_frame(self):
+        previous_index = self.index
+        self.index = (self.index + 1) % self.sequence_size
+        if previous_index != self.index:
+            self.__reset_cached_frame()
+            return self.__cached_frame.duration
+        return SINGLE_FRAME
+
     
     def flip_frame(self, index: int, x: bool, y: bool):
         self._frames[index].flip_image(x, y)
