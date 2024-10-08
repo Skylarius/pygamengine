@@ -19,7 +19,7 @@ requirements = [
 
 setup(
     name='pygamengine',
-    version='0.1.7',
+    version='0.1.8',
     description='Game Engine based on PyGame',
     long_description=readme,
     author='Ilario Gerloni',
