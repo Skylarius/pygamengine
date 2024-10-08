@@ -8,6 +8,10 @@ class Component:
     def __init__(self, name="component") -> None:
         self.name = f"{name}_{Component.count}"
         Component.count+=1
-
-    def update(self, pygameobject: 'PygameObject'):
+        self.pygameobject: PygameObject = None
+    
+    def set_pygameobject(self, pygameobject: 'PygameObject'):
+        self.pygameobject = pygameobject
+    
+    def start(self):
         pass

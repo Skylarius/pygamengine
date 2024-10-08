@@ -1,7 +1,6 @@
 from __future__ import annotations
 from typing import Tuple, Type
 from .collider import Collider
-from .components import Component
 
 class Transform:
     def __init__(self) -> None:
@@ -80,8 +79,6 @@ class GameObject:
         self.mark_as_to_update = False
         '''NB. use Ngine.update_draw_order to make it effective after updating'''
         self.draw_order: int = -1
-        '''Components'''
-        self.components: list[Component] = []
     
     def __str__(self) -> str:
         return f"{self.name}, {type(self)}"
@@ -126,19 +123,7 @@ class GameObject:
             Transform.lerp(
                 self.transform.get_position(), position, t
             )
-        )
-
-    '''Components Section'''
-    '''Add component as new'''
-    def add_component(self, c: Component):
-        self.components.append(c)
-
-    def get_component(self, component_class: type) -> Component:
-        for component in self.components:
-            if isinstance(component, component_class):
-                return component
-
-        
+        )        
 
 class Rectangle(GameObject):
     def __init__(self, name: str, width=10, height=20, color=(240,240,240,255)) -> None:

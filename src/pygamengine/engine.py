@@ -3,9 +3,10 @@ from typing import Callable
 from .gameobject import GameObject, Rectangle, Text
 from .background import Background
 from .event import EventSystem
-from .custom_events import ColliderEnabledChangedData, ColliderEnabledChangedEventType, ObjectLayerUpdated
-from .custom_events import NewObjectCreated, ObjectDeleted, GameObjectData, CoroutineEnd, CoroutineData
-from .exceptions import GameObjectNotFoundError
+from .custom_events import ColliderEnabledChangedData, ColliderEnabledChangedEventType, ObjectLayerUpdated, CoroutineEnd
+from .custom_events import NewObjectCreated, ObjectDeleted, ObjectStarted, ComponentAddedToObject, GameObjectData, ComponentData
+from .components import Component
+from .exceptions import GameObjectNotFoundError, ComponentNotFoundError
 import pygame
 from pygame.locals import *
 import sys
@@ -24,19 +25,15 @@ class PygameObject(pygame.sprite.DirtySprite):
         self.__original_image = image
         self.__has_start_executed = False
         self.__filtered_collidable_objects_cache = list[PygameObject]()
+        self.components: list[Component] = []
         logging.basicConfig(level=logging.DEBUG)
 
+
     def update(self) -> None: # Overriding pygame.sprite.DirtySprite.update
-        # Start
-        if not self.has_started():
-            self.gameobject.start()
-            self.set_as_started()
         # Tick
         self.gameobject.tick()
 
         # Execute components actions
-        for component in self.gameobject.components:
-            component.update(self)
 
         # TODO: replace this if with a function that HAS to be called specifically from the Ngine.
         # Example: see create_new_object, or update_draw_order, which are NOT called from the object 
@@ -148,6 +145,19 @@ class PygameObject(pygame.sprite.DirtySprite):
     def update_original_image(self, new_image: pygame.Surface):
         self.__original_image = new_image
         self.__original_image.convert()
+    
+    def add_component(self, component: Component):
+        self.components.append(component)
+        return component
+    
+    def remove_component(self, component: Component):
+        self.components.remove(component)
+    
+    def get_component(self, component_type: type):
+        for c in self.components:
+            if isinstance(c, component_type):
+                return c
+        return None
 
 
 class PyGameNgine(metaclass=Singleton):
@@ -203,7 +213,7 @@ class PyGameNgine(metaclass=Singleton):
         event_system.subscribe(ColliderEnabledChangedEventType, collider_enabled_changed_callback)
 
         def invalidate_filtered_collidable_objects_cache_all(data: GameObjectData):
-            gameobject = data.get_game_object()
+            gameobject: GameObject = data.get_game_object()
             pygameobject_of_event = self.__get_pygameobject(gameobject)
             if pygameobject_of_event is None:
                 raise GameObjectNotFoundError("Couldn't find Pygameobject passed on this event as GameObject")
@@ -216,6 +226,31 @@ class PyGameNgine(metaclass=Singleton):
         
         event_system.subscribe(NewObjectCreated.event_type, invalidate_filtered_collidable_objects_cache_all)
         event_system.subscribe(ObjectDeleted.event_type, invalidate_filtered_collidable_objects_cache_all)
+
+        def execute_start_on_object(data: GameObjectData):
+            gameobject: GameObject = data.get_game_object()
+            pygameobject_of_event = self.__get_pygameobject(gameobject)
+            if pygameobject_of_event is None:
+                raise GameObjectNotFoundError("Couldn't find Pygameobject passed on this event as GameObject")
+            # Start
+            if not pygameobject_of_event.has_started():
+                pygameobject_of_event.gameobject.start()
+                pygameobject_of_event.set_as_started()
+        
+        event_system.subscribe(ObjectStarted.event_type, execute_start_on_object)
+
+        def execute_start_on_component(data: ComponentData):
+            pygameobject: PygameObject = data.get_pygameobject()
+            if pygameobject is None:
+                raise GameObjectNotFoundError("Pygameobject is None")
+            component: Component = data.get_component()
+            if component not in pygameobject.components:
+                raise ComponentNotFoundError("Component Not Found on Pygameobject")
+            component.set_pygameobject(pygameobject)
+            component.start()
+        
+        event_system.subscribe(ComponentAddedToObject.event_type, execute_start_on_component)
+
     
     def game_over(self):
         pygame.quit()
@@ -304,6 +339,7 @@ class PyGameNgine(metaclass=Singleton):
         if self.__all_sprites:
             self.__all_sprites.add(pygameobject)
         NewObjectCreated(gameobject)
+        ObjectStarted(gameobject)
         logging.debug(f"+Created {gameobject}")
         return pygameobject
         
@@ -335,6 +371,15 @@ class PyGameNgine(metaclass=Singleton):
     
     def is_in_display(self, position: tuple[2]):
         return 0 < position[0] < self.display[0] and 0 < position[1] < self.display[1]
+    
+    def add_new_component(self, component: Component, gameobject: GameObject):
+        pygameobject = self.__get_pygameobject(gameobject)
+        if pygameobject is None:
+            raise GameObjectNotFoundError("Couldn't find Pygameobject passed on this event as GameObject. NB. Don't add components in __init__, use start()")
+        c = pygameobject.add_component(component)
+        ComponentAddedToObject(pygameobject, component)
+        return c 
+
 
     def run_engine(self):
         # Prepare dirty sprites
@@ -356,7 +401,9 @@ class PyGameNgine(metaclass=Singleton):
             pygame.display.update(rects)
             
             # Run Coroutines
-            self.__coroutine_system.run_coroutines()
+            for ended_coroutine in self.__coroutine_system.run_coroutines():
+                CoroutineEnd(ended_coroutine)
+
 
             # Handle all collisions (NO!)
             #self.__handle_collisions_all_objects_with_parallel_threads()
