@@ -15,7 +15,7 @@ class Ship(GameObject):
         self.__setup_on_alien_deletion()
 
     def start(self):
-        self.transform.set_position((Ngine.display[0]/2, 600))
+        self.transform.set_position((Ngine.display[0]/2, Ngine.display[1]*4/5))
         self.transform.set_rotation(0)
         self.set_collision(True)
 
@@ -114,7 +114,8 @@ class Alien(GameObject):
 
 
 if __name__ == "__main__":
-    Ngine.set_background(Background("src/background/space.jpg"))
+    # Ngine.set_display(1920,1080, fullscreen=True)
+    Ngine.set_background(Background("src/background/space.jpg", "src/background/space1080p.png"))
     ship = Ship()
     Ngine.create_new_gameobject(ship)
     for i in range(30, int(Ngine.display[0]*2/3) , 150):
@@ -123,4 +124,5 @@ if __name__ == "__main__":
             alien.start_height = j
             alien.transform.set_position((i, j))
             Ngine.create_new_gameobject(alien)
+    Alien.boundaries = (30, Ngine.display[0] - 30)
     Ngine.run_engine()
