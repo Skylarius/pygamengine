@@ -191,7 +191,7 @@ class PyGameNgine(metaclass=Singleton):
                 flags |= FULLSCREEN
             if resizable:
                 flags |= RESIZABLE
-            if scaled:
+            if scaled and x == 1280 and y == 720:
                 flags |= SCALED
         vsync_value = 0 if not vsync else 1
         # flags = FULLSCREEN | DOUBLEBUF
@@ -204,7 +204,7 @@ class PyGameNgine(metaclass=Singleton):
         self.__background.convert()
     
     def set_background(self, background: Background):
-        self.__background.blit(pygame.image.load(background.image_path), (0,0))
+        self.__background.blit(pygame.image.load(background.get_path(self.display)), (0,0))
         self.__background.convert()
     
     def set_background_color(self, color: pygame.Color):
@@ -439,6 +439,7 @@ class PyGameNgine(metaclass=Singleton):
                 if event.type == QUIT:
                     running = False
                 elif event.type == VIDEORESIZE:
+                    pygame.display.update(self.__background.get_rect())
                     VideoResize(event.dict["size"])
             self.__clock.tick(self.tick_time)
 
