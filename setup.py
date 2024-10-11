@@ -14,12 +14,13 @@ with open('LICENSE') as f:
 # Add here all required dependencies
 requirements = [
     'nose',
-    'pygame'
+    'pygame',
+    'deprecated'
     ]
 
 setup(
     name='pygamengine',
-    version='0.1.9',
+    version='0.1.10',
     description='Game Engine based on PyGame',
     long_description=readme,
     author='Ilario Gerloni',
