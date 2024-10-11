@@ -186,9 +186,9 @@ class DrawSnake(Coroutine):
             
             # Combine upperpoints and lowerpoints (clockwise way)
             for i in range(0, len(upper_points)):
-                points.append(Transform.get_vectors_distance(rect_top_left, upper_points[i]))
+                points.append(Transform.get_displacement(rect_top_left, upper_points[i]))
             for i in range(0, len(lower_points)):
-                points.append(Transform.get_vectors_distance(rect_top_left, lower_points[len(lower_points) - i - 1]))                        
+                points.append(Transform.get_displacement(rect_top_left, lower_points[len(lower_points) - i - 1]))                        
             
             image = pygame.Surface((max_x - min_x + head.image.get_width()*3, max_y - min_y + head.image.get_height()*3))
             # image.fill((0,255,0,255))
