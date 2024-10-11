@@ -1,6 +1,8 @@
 from __future__ import annotations
 from typing import Tuple, Type
 from .collider import Collider
+from math import sqrt
+from deprecated import deprecated
 
 class Transform:
     def __init__(self) -> None:
@@ -52,12 +54,42 @@ class Transform:
     def get_relative_position(self, position: tuple[float, float]) -> tuple[float, float]:
         return (position[0] - self.__position[0], position[1] - self.__position[1])
     
-    """
-    Get distance between vector A and B
-    """
     @staticmethod
+    @deprecated("Use get_displacement() instead")
     def get_vectors_distance(A: tuple[float, float], B: tuple[float, float]) -> tuple[float, float]:
         return B[0] - A[0], B[1] - A[1]
+    
+    """
+    Get displacement vector A and B (returns B - A vector)
+    """
+    @staticmethod
+    def get_displacement(start_V: tuple[float, float], end_V: tuple[float, float]) -> tuple[float, float]:
+        return end_V[0] - start_V[0], end_V[1] -  start_V[1]
+
+    """Get vector lenght but don't apply square root (faster)"""    
+    @staticmethod
+    def get_vector_length_squared(V: tuple[float, float]) -> float:
+        x, y = V
+        return x*x + y*y
+    
+    @staticmethod
+    def get_vector_length(V: tuple[float, float]) -> float:
+        return sqrt(Transform.get_vector_length_squared(V))
+    
+    """
+    Get squared distance between vectors (faster)
+    """
+    @staticmethod
+    def get_distance_squared(A: tuple[float, float], B: tuple[float, float]) -> float:
+        x, y = B[0] - A[0], B[1] - A[1]
+        return x*x + y*y
+
+    """
+    Get distance between vectors
+    """
+    @staticmethod
+    def get_distance(A: tuple[float, float], B: tuple[float, float]) -> float:
+        return sqrt(Transform.get_distance_squared(A, B))
     
     @staticmethod
     def get_vectors_sum(*vectors: tuple[float, float]):
@@ -67,6 +99,10 @@ class Transform:
             sum_x+=v[0]
             sum_y+=v[1]
         return sum_x, sum_y
+    
+    @staticmethod 
+    def get_vectors_diff(A: tuple[float, float], B: tuple[float, float]) -> tuple[float, float]:
+        return A[0] - B[0], A[1] - B[1]
 
 
         
