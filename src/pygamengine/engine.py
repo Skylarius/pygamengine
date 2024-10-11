@@ -2,11 +2,13 @@ from __future__ import annotations
 from typing import Callable
 from .gameobject import GameObject, Rectangle, Text
 from .background import Background
+
 from .event import EventSystem
-from .custom_events import ColliderEnabledChangedData, ColliderEnabledChangedEventType, ObjectLayerUpdated, CoroutineEnd
-from .custom_events import NewObjectCreated, ObjectDeleted, ObjectStarted, ComponentAddedToObject, GameObjectData, ComponentData
+from .custom_events import ColliderEnabledChangedData, ColliderEnabledChangedEventType, ObjectLayerUpdated, CoroutineEnd, VideoResize
+from .custom_events import NewObjectCreated, ObjectDeleted, ObjectStarted, ComponentAddedToObject, GameObjectData, ComponentData, EventData
 from .components import Component
 from .exceptions import GameObjectNotFoundError, ComponentNotFoundError
+
 import pygame
 from pygame.locals import *
 import sys
@@ -179,12 +181,24 @@ class PyGameNgine(metaclass=Singleton):
 
         self.setup_event_system()
     
-    def set_display(self, x: int, y: int, color: pygame.Color = 0):
+    def set_display(self, x: int, y: int, color: pygame.Color = 0, in_flags: int = 0, fullscreen: bool = False, resizable: bool = True, scaled: bool = True, vsync: bool = True):
         # Create The Backgound
-        flags = DOUBLEBUF
+        if in_flags > 0:
+            flags = in_flags
+        else:
+            flags = DOUBLEBUF
+            if fullscreen:
+                flags |= FULLSCREEN
+            if resizable:
+                flags |= RESIZABLE
+            if scaled:
+                flags |= SCALED
+        vsync_value = 0 if not vsync else 1
         # flags = FULLSCREEN | DOUBLEBUF
         self.display = x, y
-        self.__screen = pygame.display.set_mode(self.display, flags, 16)
+        self.__display_flags = flags
+        self.__display_vsync = vsync_value
+        self.__screen = pygame.display.set_mode(self.display, flags, 16, vsync=vsync_value)
         self.__background = pygame.Surface(self.__screen.get_size())
         r = self.__background.get_rect()
         self.__background.convert()
@@ -250,6 +264,13 @@ class PyGameNgine(metaclass=Singleton):
             component.start()
         
         event_system.subscribe(ComponentAddedToObject.event_type, execute_start_on_component)
+
+        def on_video_resize(new_size_data: EventData):
+            logging.debug(f"New Video Size: {new_size_data.data}")
+            # TODO: We don't need to reset the display for every video size event, but a game programmer might, so here an example
+            # self.set_display(new_size_data.data[0], new_size_data.data[1], in_flags=self.__display_flags, vsync=self.__display_vsync)
+        
+        event_system.subscribe(VideoResize.event_type, on_video_resize)
 
     
     def game_over(self):
@@ -392,7 +413,8 @@ class PyGameNgine(metaclass=Singleton):
             pygameobject.rect.size = pygameobject.image.get_size()
         
         # Start infinite loop
-        while True:
+        running = True
+        while running:
             # Execute Start and Tick (now using DirtySprite update function)
             self.__all_sprites.update()
             
@@ -413,6 +435,11 @@ class PyGameNgine(metaclass=Singleton):
 
             # Update
             pygame.event.pump() # process event queue
+            for event in pygame.event.get():
+                if event.type == QUIT:
+                    running = False
+                elif event.type == VIDEORESIZE:
+                    VideoResize(event.dict["size"])
             self.__clock.tick(self.tick_time)
 
 

@@ -17,6 +17,7 @@ ObjectLayerUpdatedEventType: EventType = "object_layer_updated"
 ObjectStartedEventType: EventType = "object_started_event_type"
 ComponentAddedToObjectEventType: EventType = "component_added_to_object"
 CoroutineEndEventType: EventType = "coroutine_end"
+VideoResizeEventType: EventType = "video_resize"
 
 
 '''Collider Events'''
@@ -90,3 +91,9 @@ class CoroutineEnd(Event):
     event_type = CoroutineEndEventType
     def __init__(self, coroutine: Coroutine) -> None:
         super().__init__(CoroutineEnd.event_type, CoroutineData(coroutine))
+
+'''Video Event'''
+class VideoResize(Event):
+    event_type = VideoResizeEventType
+    def __init__(self, new_size: tuple[int, int]) -> None:
+        super().__init__(VideoResize.event_type, EventData(new_size))
