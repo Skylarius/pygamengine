@@ -16,6 +16,7 @@ class Frame:
         self.image.convert()
         self.duration: int = duration
     
+    @staticmethod
     def make_frames_from_sprites_in_folder(folder_path: str, all_frames_duration: int = 0, prefix="") -> list['Frame']:
         frames: list[Frame] = []
         paths = os.listdir(folder_path)
