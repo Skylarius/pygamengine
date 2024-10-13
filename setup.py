@@ -14,8 +14,7 @@ with open('LICENSE') as f:
 # Add here all required dependencies
 requirements = [
     'nose',
-    'pygame',
-    'deprecated'
+    'pygame'
     ]
 
 setup(
