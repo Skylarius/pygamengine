@@ -87,10 +87,10 @@ class Animation:
         for f in self._frames:
             f.flip_image(x, y)
     
-    @classmethod
-    def make_single_frame_animation_from_image(cls, name: str, image: Surface):
+    @staticmethod
+    def make_single_frame_animation_from_image(name: str, image: Surface):
         return Animation(name, [Frame(image)])
     
-    @classmethod
-    def make_single_frame_animation_from_sprite(cls, name: str, sprite_path: str):
+    @staticmethod
+    def make_single_frame_animation_from_sprite(name: str, sprite_path: str):
         return Animation.make_single_frame_animation_from_image(name, pygameimage.load(sprite_path))
