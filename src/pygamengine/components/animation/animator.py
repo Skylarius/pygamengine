@@ -14,6 +14,7 @@ class Animator(Component):
         self._states_animations_dict: Dict[str, Animation] = {}
         self._state = ""
         self.animation_coroutine: AnimationCoroutine = None
+        self.speed: float = 1
     
     def set_state(self, state: str):
         old_state = self._state
@@ -90,12 +91,14 @@ class AnimationCoroutine(Coroutine):
                 yield None
                 break
             framecount = self.animator.next_frame_current_animation()
+            speed = self.animator.speed
             self.animator.update_image()
-            if framecount == SINGLE_FRAME:
+            if framecount == SINGLE_FRAME or speed == 0:
                 yield None
                 self.play = False
                 self.loop = False
                 break
+            framecount/=speed
             i = 0
             while self.play and i <= framecount:
                 yield i
