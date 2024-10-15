@@ -7,7 +7,7 @@ from pygamengine.components import Animator
 class Stickman(GameObject):
     def __init__(self):
         super().__init__("ship")
-        self.speed = 10
+        self.speed = 4
         self.boundaries = [(100, Ngine.display[0] - 100), (100, Ngine.display[1] - 100)]
         self.sprite = "src/sprites/animations/stickman/stick_0.png"
 
@@ -39,13 +39,17 @@ class Stickman(GameObject):
         if keys[pygame.K_a] and self.transform.get_position()[0] > self.boundaries[0][0]: 
             self.move(-self.speed, 0)
             self.my_animator.set_state("walk_left")
+            self.my_animator.speed = 1
         elif keys[pygame.K_d]and self.transform.get_position()[0] < self.boundaries[0][1]:
-            self.move(self.speed, 0)
+            self.move(self.speed * 3, 0)
             self.my_animator.set_state("walk_right")
+            self.my_animator.speed = 3
         elif keys[pygame.K_w]and self.transform.get_position()[1] > self.boundaries[1][0]:
             self.move(0, -self.speed)
+            self.my_animator.speed = 1
         elif keys[pygame.K_s]and self.transform.get_position()[1] < self.boundaries[1][1]:
             self.move(0, self.speed)
+            self.my_animator.speed = 1
         else:
             self.my_animator.set_state("idle")
 
