@@ -1,6 +1,7 @@
 from pygame import image as pygameimage
 from pygame import Surface
 from pygamengine.components.animation.frame import Frame
+from typing import Generator
 
 SINGLE_FRAME = -1
 
@@ -31,6 +32,13 @@ class Animation:
         else:
             self._sequence = [i for i in range(0, len(self._frames))]
         self.sequence_size = len(self._sequence)
+    
+    def get_sequence_indices_generator(self) -> Generator:
+        for i in self._sequence:
+            yield i
+    
+    def get_sequence_indices(self) -> list[int]:
+        return [i for i in self._sequence]
 
     '''Returns the frame at the sequence index'''
     def get_frame(self) -> Frame:
