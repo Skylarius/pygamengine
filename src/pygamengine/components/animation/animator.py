@@ -86,23 +86,27 @@ class AnimationCoroutine(Coroutine):
         self.loop = loop
     
     def execute(self) -> Generator:
-        while True:
-            if not self.play:
-                yield None
-                break
-            framecount = self.animator.next_frame_current_animation()
-            speed = self.animator.speed
-            self.animator.update_image()
-            if framecount == SINGLE_FRAME or speed == 0:
-                yield None
-                self.play = False
-                self.loop = False
-                break
-            framecount/=speed
-            i = 0
-            while self.play and i <= framecount:
-                yield i
-                i+=1
+        while True: # Loop animation
+            frame_index = 0
+            sequence_size = self.animator.get_current_animation().sequence_size
+            while frame_index < sequence_size: # Play Animation Once
+                if not self.play:
+                    yield None
+                    break
+                framecount = self.animator.next_frame_current_animation()
+                speed = self.animator.speed
+                self.animator.update_image()
+                if framecount == SINGLE_FRAME or speed == 0:
+                    yield None
+                    self.play = False
+                    self.loop = False
+                    break
+                framecount/=speed
+                i = 0
+                while self.play and i <= framecount:
+                    yield i
+                    i+=1
+                frame_index+=1
             if not self.loop:
                 yield None
                 break
