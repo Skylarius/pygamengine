@@ -16,13 +16,13 @@ class Animator(Component):
         self.animation_coroutine: AnimationCoroutine = None
         self.speed: float = 1
     
-    def set_state(self, state: str):
+    def set_state(self, state: str, loop_animation: bool = True):
         old_state = self._state
         self._state = state
         if old_state != self._state:
             self.__reset_cached_animation()
             self.__reset_cached_image()
-            self.start_current_animation()
+            self.start_current_animation(loop=loop_animation)
     
     def __reset_cached_animation(self):
         self.__cached_animation = self._states_animations_dict[self._state]
