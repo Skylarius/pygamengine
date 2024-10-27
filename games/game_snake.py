@@ -1,4 +1,5 @@
 from typing import Generator
+import context
 from pygamengine import *
 from pygamengine.coroutines import WaitSeconds, Coroutine
 import pygame
