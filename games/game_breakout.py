@@ -1,4 +1,5 @@
 import pygame
+import context
 from pygamengine import *
 from pygamengine.coroutines import RunAfterSeconds, Coroutine, WaitSeconds
 import random

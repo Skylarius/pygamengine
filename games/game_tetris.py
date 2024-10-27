@@ -1,6 +1,7 @@
+import pygame
+import context
 from pygamengine import *
 from pygamengine.coroutines import WaitSeconds
-import pygame
 import time
 from typing import Tuple
 import random

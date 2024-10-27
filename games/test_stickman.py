@@ -1,6 +1,6 @@
-from pygamengine import *
 import pygame
-
+import context
+from pygamengine import *
 from pygamengine.components.animation import Animation, Frame
 from pygamengine.components import Animator
 
