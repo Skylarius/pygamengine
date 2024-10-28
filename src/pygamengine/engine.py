@@ -16,8 +16,12 @@ from .design_patterns import Singleton
 from .coroutines import CoroutineSystem
 import logging
 from threading import Thread
+from .caches import SpriteCache
 
 class PygameObject(pygame.sprite.DirtySprite):
+
+    sprite_cache = SpriteCache()
+
     def __init__(self, gameobject: GameObject, image: pygame.Surface) -> None:
         pygame.sprite.DirtySprite.__init__(self)
         self.image = image
@@ -42,7 +46,7 @@ class PygameObject(pygame.sprite.DirtySprite):
                 txt: Text = self.gameobject
                 self.image = txt.font.render(txt.text, False, txt.color)
             elif not isinstance(self.gameobject, Rectangle):
-                self.image = pygame.image.load(self.gameobject.sprite)
+                self.image = PygameObject.sprite_cache.load_sprite(self.gameobject.sprite)
             self.update_original_image(self.image)
             self.mark_as_to_update = False
         
@@ -166,8 +170,6 @@ class PyGameNgine(metaclass=Singleton):
         self.__pygameobjects_marked_for_deletion = list[PygameObject]()
         self.__collidable_objects = list[PygameObject]()
         self.__all_sprites: pygame.sprite.LayeredDirty = None
-        self.__sprite_path_image_dict_cache: dict[str, tuple[pygame.Surface, int]] = {}
-        self.sprite_cache_size = 10
         pygame.init()
         self.__clock = pygame.time.Clock()
         # flags = FULLSCREEN | DOUBLEBUF
@@ -177,6 +179,9 @@ class PyGameNgine(metaclass=Singleton):
 
         # Start CoroutineSystem
         self.__coroutine_system = CoroutineSystem()
+
+        # Setup Caches
+        self.sprite_cache = SpriteCache()
 
         self.setup_event_system()
     
@@ -336,24 +341,8 @@ class PyGameNgine(metaclass=Singleton):
         #     handle_collisions_between_pygameobjects(*t)
     
     def __get_image_from_sprite_path(self, sprite_path) -> pygame.Surface:
-        if sprite_path not in self.__sprite_path_image_dict_cache:
-            if len(self.__sprite_path_image_dict_cache) > self.sprite_cache_size:
-                items = self.__sprite_path_image_dict_cache.items()
-                min_count = min([v[1] for _, v in items])
-                k_to_delete = []
-                for k, v in items:
-                    if v[1] == min_count:
-                        k_to_delete.append(k)
-                for k in k_to_delete:
-                    del self.__sprite_path_image_dict_cache[k]
-            image = pygame.image.load(sprite_path)
-            self.__sprite_path_image_dict_cache[sprite_path] = (image, 0)
-            return image
-        image_and_count: tuple[pygame.Surface, bool] = self.__sprite_path_image_dict_cache[sprite_path]
-        self.__sprite_path_image_dict_cache[sprite_path] = (image_and_count[0], image_and_count[1] + 1)
-
-        return image_and_count[0]
-
+        return self.sprite_cache.load_sprite(sprite_path)
+        
     def create_new_gameobject(self, gameobject: GameObject) -> PygameObject:
         image = pygame.Surface((1,1))
         if isinstance(gameobject, Rectangle):
