@@ -2,6 +2,7 @@ from pygame import image as pygameimage
 from pygame import Surface
 from pygamengine.components.animation.frame import Frame
 from typing import Generator
+from pygamengine.caches import SpriteCache
 
 SINGLE_FRAME = -1
 
@@ -13,6 +14,9 @@ class Animation:
             size (int): the amount of animation frames 
             index (int): index of current animation frame
     '''
+
+    sprite_cache = SpriteCache()
+
     def __init__(self, name, frames: list[Frame] = []):
         self.name = name
         self._frames: list[Frame] = frames
@@ -101,4 +105,4 @@ class Animation:
     
     @staticmethod
     def make_single_frame_animation_from_sprite(name: str, sprite_path: str):
-        return Animation.make_single_frame_animation_from_image(name, pygameimage.load(sprite_path))
+        return Animation.make_single_frame_animation_from_image(name, Animation.sprite_cache.load_sprite(sprite_path))
