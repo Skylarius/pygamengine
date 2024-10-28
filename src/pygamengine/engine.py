@@ -167,6 +167,7 @@ class PyGameNgine(metaclass=Singleton):
         self.__collidable_objects = list[PygameObject]()
         self.__all_sprites: pygame.sprite.LayeredDirty = None
         self.__sprite_path_image_dict_cache: dict[str, tuple[pygame.Surface, int]] = {}
+        self.sprite_cache_size = 10
         pygame.init()
         self.__clock = pygame.time.Clock()
         # flags = FULLSCREEN | DOUBLEBUF
@@ -336,11 +337,21 @@ class PyGameNgine(metaclass=Singleton):
     
     def __get_image_from_sprite_path(self, sprite_path) -> pygame.Surface:
         if sprite_path not in self.__sprite_path_image_dict_cache:
+            if len(self.__sprite_path_image_dict_cache) > self.sprite_cache_size:
+                items = self.__sprite_path_image_dict_cache.items()
+                min_count = min([v[1] for _, v in items])
+                k_to_delete = []
+                for k, v in items:
+                    if v[1] == min_count:
+                        k_to_delete.append(k)
+                for k in k_to_delete:
+                    del self.__sprite_path_image_dict_cache[k]
             image = pygame.image.load(sprite_path)
-            self.__sprite_path_image_dict_cache[sprite_path] = (image, True)
+            self.__sprite_path_image_dict_cache[sprite_path] = (image, 0)
             return image
         image_and_count: tuple[pygame.Surface, bool] = self.__sprite_path_image_dict_cache[sprite_path]
-        self.__sprite_path_image_dict_cache[sprite_path] = (image_and_count[0], True)
+        self.__sprite_path_image_dict_cache[sprite_path] = (image_and_count[0], image_and_count[1] + 1)
+
         return image_and_count[0]
 
     def create_new_gameobject(self, gameobject: GameObject) -> PygameObject:
