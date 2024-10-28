@@ -4,7 +4,6 @@ import os
 import sys
 import inspect
 
-# Aggiungo questo sennó non funziona un cazzo NEI file della cartella demo
 current_dir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 print("->" + current_dir)
 parent_dir = os.path.dirname(current_dir)

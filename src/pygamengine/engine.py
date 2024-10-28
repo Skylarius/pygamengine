@@ -28,6 +28,8 @@ class PygameObject(pygame.sprite.DirtySprite):
         self.__has_start_executed = False
         self.__filtered_collidable_objects_cache = list[PygameObject]()
         self.components: list[Component] = []
+        self.dirty = False
+        self.mark_as_to_update = False
         logging.basicConfig(level=logging.DEBUG)
 
 
@@ -35,11 +37,6 @@ class PygameObject(pygame.sprite.DirtySprite):
         # Tick
         self.gameobject.tick()
 
-        # Execute components actions
-
-        # TODO: replace this if with a function that HAS to be called specifically from the Ngine.
-        # Example: see create_new_object, or update_draw_order, which are NOT called from the object 
-        # but from the Ngine
         if self.gameobject.mark_as_to_update:
             if isinstance(self.gameobject, Text):
                 txt: Text = self.gameobject
@@ -169,6 +166,7 @@ class PyGameNgine(metaclass=Singleton):
         self.__pygameobjects_marked_for_deletion = list[PygameObject]()
         self.__collidable_objects = list[PygameObject]()
         self.__all_sprites: pygame.sprite.LayeredDirty = None
+        self.__sprite_path_image_dict_cache: dict[str, tuple[pygame.Surface, int]] = {}
         pygame.init()
         self.__clock = pygame.time.Clock()
         # flags = FULLSCREEN | DOUBLEBUF
@@ -335,6 +333,15 @@ class PyGameNgine(metaclass=Singleton):
                 t.run()
         # for t in tuples:
         #     handle_collisions_between_pygameobjects(*t)
+    
+    def __get_image_from_sprite_path(self, sprite_path) -> pygame.Surface:
+        if sprite_path not in self.__sprite_path_image_dict_cache:
+            image = pygame.image.load(sprite_path)
+            self.__sprite_path_image_dict_cache[sprite_path] = (image, True)
+            return image
+        image_and_count: tuple[pygame.Surface, bool] = self.__sprite_path_image_dict_cache[sprite_path]
+        self.__sprite_path_image_dict_cache[sprite_path] = (image_and_count[0], True)
+        return image_and_count[0]
 
     def create_new_gameobject(self, gameobject: GameObject) -> PygameObject:
         image = pygame.Surface((1,1))
@@ -352,7 +359,7 @@ class PyGameNgine(metaclass=Singleton):
         else:
             # Load sprite
             if gameobject.sprite:
-                image = pygame.image.load(gameobject.sprite)
+                image = self.__get_image_from_sprite_path(gameobject.sprite)
         image.convert()
         pygameobject = PygameObject(gameobject, image)
         pygameobject.rect.size = pygameobject.image.get_size()
