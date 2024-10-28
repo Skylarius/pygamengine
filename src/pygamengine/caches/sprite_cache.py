@@ -4,11 +4,11 @@ from pygame import image as pygameimage
 class SpriteCache:
     def __init__(self) -> None:
         self.__sprite_cache: dict[str, tuple[Surface, int]] = {}
-        self.size = 15
+        self.size = 100
 
     def load_sprite(self, sprite_path) -> Surface:
         if sprite_path not in self.__sprite_cache:
-            if len(self.__sprite_cache) > self.size/2:
+            if len(self.__sprite_cache) > self.size:
                 items = self.__sprite_cache.items()
                 min_count = min([v[1] for _, v in items])
                 k_to_delete = []

@@ -15,8 +15,6 @@ class Animation:
             index (int): index of current animation frame
     '''
 
-    sprite_cache = SpriteCache()
-
     def __init__(self, name, frames: list[Frame] = []):
         self.name = name
         self._frames: list[Frame] = frames
@@ -105,4 +103,4 @@ class Animation:
     
     @staticmethod
     def make_single_frame_animation_from_sprite(name: str, sprite_path: str):
-        return Animation.make_single_frame_animation_from_image(name, Animation.sprite_cache.load_sprite(sprite_path))
+        return Animation.make_single_frame_animation_from_image(name, Frame.sprite_cache.load_sprite(sprite_path))
