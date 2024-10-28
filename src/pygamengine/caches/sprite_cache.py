@@ -21,6 +21,6 @@ class SpriteCache:
             self.__sprite_cache[sprite_path] = (image, 0)
             return image
         image_and_count: tuple[Surface, int] = self.__sprite_cache[sprite_path]
-        self.__sprite_cache[sprite_path] = (image_and_count[0], image_and_count[1] + 1)
+        self.__sprite_cache[sprite_path] = (image_and_count[0], (image_and_count[1] + 1) % 999999 + 3)
 
         return image_and_count[0]
