@@ -12,12 +12,12 @@ class TetrisBlock(Rectangle):
     
     def __init__(self, name="block", color=(255,255,255,255), fake=False) -> None:
         super().__init__(name, TetrisBlock.grid_step, TetrisBlock.grid_step, color)
-        self.transform.set_position((Ngine.display[0]/2, TetrisBlock.grid_step))
         self.block_position = (0,0)
         self.fake = fake
         Blocks.append(self)
     
     def start(self):
+        self.transform.set_position((Ngine.display[0]/2, TetrisBlock.grid_step))
         self.set_collision(False)
     
     def set_block_position(self, x: int, y: int):
@@ -324,6 +324,8 @@ class I(BlocksSet):
 class TetrisInfo(Text):
     def __init__(self, name="info") -> None:
         super().__init__(name, color=(0,255,0,255))
+    
+    def start(self):
         self.transform.set_position(
             (Ngine.display[0]*4/5, Ngine.display[1]/2)
         )

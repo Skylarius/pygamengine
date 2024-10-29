@@ -6,7 +6,6 @@ from pygamengine import *
 class PongObject(Rectangle):
     def __init__(self, name: str, width=10, height=20) -> None:
         super().__init__(name, width, height)
-        self.boundaries = (100, Ngine.display[1] - 100)
         self.set_collision(True)
 
 
@@ -15,6 +14,9 @@ class Player(PongObject):
         super().__init__("player", 50, 150)
         self.speed = 10
         self.transform.set_position((50, int(Ngine.display[1]/2)))
+    
+    def start(self):
+        self.boundaries = (100, Ngine.display[1] - 100)
     
     def tick(self):
         keys=pygame.key.get_pressed()
