@@ -2,7 +2,6 @@ from .engine import PyGameNgine, PygameObject
 from .gameobject import GameObject, Rectangle, Text
 from .transform import Transform
 from .background import Background
-from .ui.uiobject import Button
 
 Ngine = PyGameNgine()
 
