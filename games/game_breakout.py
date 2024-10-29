@@ -8,11 +8,11 @@ class Player(Rectangle):
     def __init__(self) -> None:
         super().__init__("player", 80, 20)
         self.speed = 20
-        self.transform.set_position((int(Ngine.display[0]/2), int(Ngine.display[1]*9/10)))
-        self.boundaries = [int(self.width/2), Ngine.display[0] - int(self.width/2)]
         self.ignore_collisions_with_class(Brick)
         
     def start(self):
+        self.transform.set_position((int(Ngine.display[0]/2), int(Ngine.display[1]*9/10)))
+        self.boundaries = [int(self.width/2), Ngine.display[0] - int(self.width/2)]
         self.set_collision(True)
     
     def tick(self):
@@ -26,11 +26,11 @@ class Player(Rectangle):
 class Ball(Rectangle):
     def __init__(self) -> None:
         super().__init__("ball", 20, 20)
-        self.boundaries = [10, Ngine.display[0] - 10]
         self.max_height = 10
         self.init_ball()
         
     def start(self):
+        self.boundaries = [10, Ngine.display[0] - 10]
         self.set_collision(True)
     
     def init_ball(self):
