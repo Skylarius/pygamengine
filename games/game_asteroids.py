@@ -1,4 +1,3 @@
-import pygame
 import context
 from pygamengine import *
 from math import sin, cos, pi
@@ -19,13 +18,13 @@ class Ship(GameObject):
         self.set_collision(True)
 
     def tick(self):
-        keys=pygame.key.get_pressed()
-        if keys[pygame.K_a]: 
+        if Input().get_key("a"):
             self.transform.set_rotation(self.transform.get_rotation()+self.speed)
-        if keys[pygame.K_d]:
+        if Input().get_key("d"):
             self.transform.set_rotation(self.transform.get_rotation()-self.speed)
-        if keys[pygame.K_SPACE]:
+        if Input().get_key("SPACE"):
             self.shoot()
+
         position = self.transform.get_position()
         self.transform.set_position((position[0] % Ngine.display[0], position[1] % Ngine.display[1]))
     

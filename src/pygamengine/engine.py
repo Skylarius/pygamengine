@@ -8,7 +8,7 @@ from .custom_events import ColliderEnabledChangedData, ColliderEnabledChangedEve
 from .custom_events import NewObjectCreated, ObjectDeleted, ObjectStarted, ComponentAddedToObject, GameObjectData, ComponentData, EventData
 from .components import Component
 from .exceptions import GameObjectNotFoundError, ComponentNotFoundError
-import pygamengine.input as Input
+from .input import Input
 
 import pygame
 from pygame.locals import *
@@ -79,10 +79,9 @@ class PygameObject(pygame.sprite.DirtySprite):
         return (position[0] - self.image.get_width()/2, position[1] - self.image.get_height()/2)
     
     def debug(self):
-        keys=pygame.key.get_pressed()
-        if keys[pygame.K_RALT]: 
+        if Input().get_key("RALT"): 
             self.debug_draw_rect((255,0,0,255))
-        if keys[pygame.K_RCTRL]:
+        if Input().get_key("RCTRL"):
             self.debug_draw_rect_condition((255,0,0,255), lambda x: x.dirty)
     
     def has_started(self) -> bool:
@@ -173,6 +172,7 @@ class PyGameNgine(metaclass=Singleton):
         self.__all_sprites: pygame.sprite.LayeredDirty = None
         pygame.init()
         self.__clock = pygame.time.Clock()
+        self.__input = Input()
         # flags = FULLSCREEN | DOUBLEBUF
         
         self.set_display(1280, 720)
@@ -450,7 +450,7 @@ class PyGameNgine(metaclass=Singleton):
                     VideoResize(event.dict["size"])
                 
             # Handle keys input:
-            Input.update_pressed()
+            self.__input.update_pressed()
 
             self.__clock.tick(self.tick_time)
             # pygame.event.pump() # process event queue

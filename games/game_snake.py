@@ -35,17 +35,16 @@ class SnakeHead(SnakePart):
         self.last: SnakePart = self
 
     def tick(self):
-        keys=pygame.key.get_pressed()
-        if keys[pygame.K_a] and self.direction[0] != 1:
+        if Input().get_key_down("a") and self.direction[0] != 1:
             self.direction = -1, 0
             self.orientation = 0
-        if keys[pygame.K_d] and self.direction[0] != -1:
+        if Input().get_key_down("d") and self.direction[0] != -1:
             self.direction = 1, 0
             self.orientation = 180
-        if keys[pygame.K_s] and self.direction[1] != -1:
+        if Input().get_key_down("s") and self.direction[1] != -1:
             self.direction = 0, 1
             self.orientation = 270
-        if keys[pygame.K_w] and self.direction[1] != 1:
+        if Input().get_key_down("w") and self.direction[1] != 1:
             self.direction = 0, -1
             self.orientation = 90
         

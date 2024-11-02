@@ -35,19 +35,18 @@ class Stickman(GameObject):
 
 
     def tick(self):
-        keys=pygame.key.get_pressed()
-        if keys[pygame.K_a] and self.transform.get_position()[0] > self.boundaries[0][0]: 
+        if Input().get_key(Input.A) and self.transform.get_position()[0] > self.boundaries[0][0]: 
             self.move(-self.speed, 0)
             self.my_animator.set_state("walk_left")
             self.my_animator.speed = 1
-        elif keys[pygame.K_d]and self.transform.get_position()[0] < self.boundaries[0][1]:
+        elif Input().get_key(Input.D) and self.transform.get_position()[0] < self.boundaries[0][1]:
             self.move(self.speed * 3, 0)
             self.my_animator.set_state("walk_right")
             self.my_animator.speed = 3
-        elif keys[pygame.K_w]and self.transform.get_position()[1] > self.boundaries[1][0]:
+        elif Input().get_key(Input.W) and self.transform.get_position()[1] > self.boundaries[1][0]:
             self.move(0, -self.speed)
             self.my_animator.speed = 1
-        elif keys[pygame.K_s]and self.transform.get_position()[1] < self.boundaries[1][1]:
+        elif Input().get_key(Input.S) and self.transform.get_position()[1] < self.boundaries[1][1]:
             self.move(0, self.speed)
             self.my_animator.speed = 1
         else:
