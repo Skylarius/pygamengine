@@ -1,4 +1,3 @@
-import pygame
 import context
 from pygamengine import *
 
@@ -7,6 +6,9 @@ class PongObject(Rectangle):
     def __init__(self, name: str, width=10, height=20) -> None:
         super().__init__(name, width, height)
         self.set_collision(True)
+    
+    def start(self):
+        self.boundaries = (100, Ngine.display[1] - 100)
 
 
 class Player(PongObject):
@@ -15,14 +17,11 @@ class Player(PongObject):
         self.speed = 10
         self.transform.set_position((50, int(Ngine.display[1]/2)))
     
-    def start(self):
-        self.boundaries = (100, Ngine.display[1] - 100)
     
     def tick(self):
-        keys=pygame.key.get_pressed()
-        if keys[pygame.K_w] and self.transform.get_position()[1] > self.boundaries[0]:
+        if Input().get_key(Input.W) and self.transform.get_position()[1] > self.boundaries[0]:
             self.move(0, -self.speed)
-        if keys[pygame.K_s] and self.transform.get_position()[1] < self.boundaries[1]: 
+        if Input().get_key(Input.S) and self.transform.get_position()[1] < self.boundaries[1]: 
             self.move(0, self.speed)
 
 

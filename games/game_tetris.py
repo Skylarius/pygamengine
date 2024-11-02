@@ -161,30 +161,14 @@ class BlocksSet(GameObject):
                     block.move_down()
         
         # Movement
-        # events = pygame.event.get()
-        # for event in events:
-        #     if event.type == pygame.KEYDOWN:
-        #         if event.key == pygame.K_a:
-        #             self.left()
-        #         elif event.key == pygame.K_d:
-        #             self.right()
-        #         elif event.key == pygame.K_SPACE:
-        #             self.rotate()
-        #     if event.type == pygame.KEYUP:
-        #         print(event.key)
-                # return
-
-        if Input.get_key_down("a"):
+        if Input().get_key_down("a"):
             self.left()
-        elif Input.get_key_down("d"):
+        elif Input().get_key_down("d"):
             self.right()
-        elif Input.get_key_down("SPACE"):
+        elif Input().get_key_down("SPACE"):
             self.rotate()
         
-        # keys = Input.get_pressed()
-        # if keys[pygame.K_s]:
-        #     self.down()
-        if Input.get_key("s"):
+        if Input().get_key("s"):
             self.down()
     
     def pick_new_random_blocks_set() -> str:

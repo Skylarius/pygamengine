@@ -1,4 +1,3 @@
-import pygame
 import context
 from pygamengine import *
 from pygamengine.coroutines import RunAfterSeconds, Coroutine, WaitSeconds
@@ -7,21 +6,19 @@ import random
 class Player(Rectangle):
     def __init__(self) -> None:
         super().__init__("player", 80, 20)
-        self.speed = 20
+        self.speed = 1
         self.ignore_collisions_with_class(Brick)
         
     def start(self):
         self.transform.set_position((int(Ngine.display[0]/2), int(Ngine.display[1]*9/10)))
+        self.start_y = self.transform.get_position()[1]
         self.boundaries = [int(self.width/2), Ngine.display[0] - int(self.width/2)]
         self.set_collision(True)
     
     def tick(self):
-        keys=pygame.key.get_pressed()
-        if keys[pygame.K_a] and self.transform.get_position()[0] > self.boundaries[0]:
-            self.move(-self.speed, 0)
-        if keys[pygame.K_d] and self.transform.get_position()[0] < self.boundaries[1]: 
-            self.move(self.speed, 0)
-
+        x, y = Input().get_mouse_position()
+        if x > self.boundaries[0] and x < self.boundaries[1]:
+            self.set_position((x, self.start_y))
 
 class Ball(Rectangle):
     def __init__(self) -> None:

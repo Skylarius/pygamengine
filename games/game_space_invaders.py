@@ -21,12 +21,11 @@ class Ship(GameObject):
         self.set_collision(True)
 
     def tick(self):
-        keys=pygame.key.get_pressed()
-        if keys[pygame.K_a] and self.transform.get_position()[0] > self.boundaries[0]: 
+        if Input().get_key_down("a") and self.transform.get_position()[0] > self.boundaries[0]: 
             self.move(-self.speed, 0)
-        if keys[pygame.K_d]and self.transform.get_position()[0] < self.boundaries[1]:
+        if Input().get_key_down("d") and self.transform.get_position()[0] < self.boundaries[1]:
             self.move(self.speed, 0)
-        if keys[pygame.K_SPACE]:
+        if Input().get_key_down("SPACE"):
             self.shoot()
     
     def shoot(self):
