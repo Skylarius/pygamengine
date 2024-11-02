@@ -8,6 +8,7 @@ from .custom_events import ColliderEnabledChangedData, ColliderEnabledChangedEve
 from .custom_events import NewObjectCreated, ObjectDeleted, ObjectStarted, ComponentAddedToObject, GameObjectData, ComponentData, EventData
 from .components import Component
 from .exceptions import GameObjectNotFoundError, ComponentNotFoundError
+import pygamengine.input as Input
 
 import pygame
 from pygame.locals import *
@@ -441,14 +442,18 @@ class PyGameNgine(metaclass=Singleton):
             self.remove_objects_marked_for_deletion()
 
             # Update
-            pygame.event.pump() # process event queue
             for event in pygame.event.get():
                 if event.type == QUIT:
                     running = False
-                elif event.type == VIDEORESIZE:
+                if event.type == VIDEORESIZE:
                     pygame.display.update(self.__background.get_rect())
                     VideoResize(event.dict["size"])
+                
+            # Handle keys input:
+            Input.update_pressed()
+
             self.__clock.tick(self.tick_time)
+            # pygame.event.pump() # process event queue
 
 
 Ngine = PyGameNgine()
