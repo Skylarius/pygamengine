@@ -15,9 +15,9 @@ class TetrisBlock(Rectangle):
         self.block_position = (0,0)
         self.fake = fake
         Blocks.append(self)
+        self.transform.set_position((Ngine.display[0]/2, TetrisBlock.grid_step))
     
     def start(self):
-        self.transform.set_position((Ngine.display[0]/2, TetrisBlock.grid_step))
         self.set_collision(False)
     
     def set_block_position(self, x: int, y: int):
@@ -161,20 +161,30 @@ class BlocksSet(GameObject):
                     block.move_down()
         
         # Movement
-        
-        events = pygame.event.get()
-        for event in events:
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_a:
-                    self.left()
-                elif event.key == pygame.K_d:
-                    self.right()
-                elif event.key == pygame.K_SPACE:
-                    self.rotate()
+        # events = pygame.event.get()
+        # for event in events:
+        #     if event.type == pygame.KEYDOWN:
+        #         if event.key == pygame.K_a:
+        #             self.left()
+        #         elif event.key == pygame.K_d:
+        #             self.right()
+        #         elif event.key == pygame.K_SPACE:
+        #             self.rotate()
+        #     if event.type == pygame.KEYUP:
+        #         print(event.key)
                 # return
+
+        if Input.get_key_down("a"):
+            self.left()
+        elif Input.get_key_down("d"):
+            self.right()
+        elif Input.get_key_down("SPACE"):
+            self.rotate()
         
-        keys = pygame.key.get_pressed()
-        if keys[pygame.K_s]:
+        # keys = Input.get_pressed()
+        # if keys[pygame.K_s]:
+        #     self.down()
+        if Input.get_key("s"):
             self.down()
     
     def pick_new_random_blocks_set() -> str:
@@ -356,7 +366,7 @@ def set_stats_text():
 
 if __name__ == "__main__":
     # Set frame
-    #Ngine.set_display(TetrisBlock.grid_step * 14, TetrisBlock.grid_step * 25)
+    # Ngine.set_display(TetrisBlock.grid_step * 14, TetrisBlock.grid_step * 25)
     for i in range(0, 21):
         block = TetrisBlock(fake=True)
         block.set_block_position(-6,i)
