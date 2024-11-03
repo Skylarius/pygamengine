@@ -81,7 +81,6 @@ class BlocksSet(GameObject):
     
     def start(self):
         self.set_collision(False)
-        set_stats_text()
     
     def left(self):
         if not self.can_move(-1,0):
@@ -210,6 +209,7 @@ class BlocksSet(GameObject):
             Ngine.create_new_gameobject(I())
         
         BlocksSet.pick_new_random_blocks_set()
+        set_stats_text()
     
     def delete_blocks_in_line():
         blocks_dict = dict()

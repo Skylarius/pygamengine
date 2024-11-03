@@ -64,12 +64,16 @@ class Bullet(GameObject):
         self.move(0, -self.speed)
         if self.transform.get_position()[1] < 0:
             # out of the screen
-            self.enabled = False
+            self.disable()
     
     def on_collision(self, other: GameObject):
         if other.name == "alien":
             Ngine.destroy(other)
-            Ngine.destroy(self)
+            self.disable()
+    
+    def disable(self):
+        self.set_position((0,0))
+        self.enabled = False
 
 class Alien(GameObject):
     # Statics
