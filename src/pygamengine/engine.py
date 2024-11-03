@@ -1,6 +1,6 @@
 from __future__ import annotations
 from typing import Callable
-from .gameobject import GameObject, Rectangle, Text
+from .gameobject import GameObject, Rectangle
 from .background import Background
 
 from .ui.ui_element import UIElement
@@ -48,10 +48,7 @@ class PygameObject(pygame.sprite.DirtySprite):
         self.gameobject.tick()
 
         if self.gameobject.mark_as_to_update:
-            if isinstance(self.gameobject, Text):
-                txt: Text = self.gameobject
-                self.image = txt.font.render(txt.text, False, txt.color)
-            elif isinstance(self.gameobject, UIElement):
+            if isinstance(self.gameobject, UIElement):
                 self.image = self.gameobject.current_image
             elif not isinstance(self.gameobject, Rectangle):
                 self.image = PygameObject.sprite_cache.load_sprite(self.gameobject.sprite)
@@ -135,7 +132,7 @@ class PygameObject(pygame.sprite.DirtySprite):
         return False
 
     def handle_collisions(self):
-        if getattr(self.gameobject, 'collider') is None or not self.gameobject.collider.is_enabled():
+        if getattr(self.gameobject, 'collider', None) is None or not self.gameobject.collider.is_enabled():
             return
         if len(self.__filtered_collidable_objects_cache) == 0:
             self.__filtered_collidable_objects_cache = Ngine.get_filtered_collidable_objects(self)
@@ -311,6 +308,8 @@ class PyGameNgine(metaclass=Singleton):
             if other == pygameobject:
                 continue
             found = False
+            if getattr(other.gameobject, 'collider', None) is None:
+                 continue
             for cls in pygameobject.gameobject.collider.ignored_colliders:
                 if isinstance(other.gameobject, cls):
                     found = True
@@ -354,6 +353,7 @@ class PyGameNgine(metaclass=Singleton):
         return self.sprite_cache.load_sprite(sprite_path)
         
     def create_new_gameobject(self, gameobject: GameObject) -> PygameObject:
+        additional_gameobjects_to_create = []
         image = pygame.Surface((1,1))
         if isinstance(gameobject, Rectangle):
             # Generate rectangle image
@@ -361,14 +361,11 @@ class PyGameNgine(metaclass=Singleton):
             image = pygame.Surface((rectangle.width, rectangle.height))
             rect = pygame.Rect(1, 1, rectangle.width - 1, rectangle.height -1)
             pygame.draw.rect(image, pygame.Color(*rectangle.color), rect)
-        elif isinstance(gameobject, Text):
-            # Create text
-            text: Text = gameobject
-            text.font = pygame.font.SysFont(None, 24)
-            image = text.font.render(text.text, True, text.color)
         elif isinstance(gameobject, UIElement):
             uielement: UIElement = gameobject
             uielement.construct()
+            for child in uielement.children:
+                additional_gameobjects_to_create.append(child)
             image = uielement.current_image
         else:
             # Load sprite
@@ -383,6 +380,8 @@ class PyGameNgine(metaclass=Singleton):
         NewObjectCreated(gameobject)
         ObjectStarted(gameobject)
         logging.debug(f"+Created {gameobject}")
+        for g in additional_gameobjects_to_create:
+            Ngine.create_new_gameobject(g)
         return pygameobject
         
     

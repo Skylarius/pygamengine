@@ -3,6 +3,7 @@ from .text import Text
 import pygame
 from pygamengine.input import Input
 from pygamengine.caches import SpriteCache
+from pygamengine.transform import Transform
 from typing import Union
 import logging
 
@@ -16,7 +17,7 @@ class Button(UIElement):
     sprite_cache = SpriteCache()
 
     def __init__(
-            self, name: str, position: tuple[float, float], size: tuple[float, float] = None, 
+            self, name: str, position: tuple[float, float] = (100,100), size: tuple[float, float] = None, 
             unselected_image: Union[str,tuple[int,int,int,int]] = (255,255,255,255),
             selected_image: Union[str,tuple[int,int,int,int]] = (255,0,0,255),
             pressed_image: Union[str,tuple[int,int,int,int]] = (0,255,0,255)) -> None:
@@ -24,10 +25,11 @@ class Button(UIElement):
         self.__input = Input()
         self.state = NONE
         self.old_state = NONE
+        self.text_offset = (0,0)
         self.unselected_image = unselected_image
         self.selected_image = selected_image
         self.pressed_image = pressed_image
-        self.text = Text(self.name, (400,400))
+        self.text = Text(f"button_text_{self.name}", (400,400), (0,0,0,255))
         self.children.append(self.text)
     
     def construct(self):
@@ -35,8 +37,7 @@ class Button(UIElement):
         self.selected_image = self.make_button_image(self.selected_image)
         self.pressed_image = self.make_button_image(self.pressed_image)
         self.current_image = self.unselected_image
-        for element in self.children:
-            element.construct()
+        self.text.draw_order = self.draw_order + 1
         
     def make_button_image(self, in_data: Union[str, tuple[int,int,int,int]]):
         if type(in_data) is str:
@@ -55,6 +56,7 @@ class Button(UIElement):
     def tick(self):
         self.state_machine()
         self.update_image()
+        self.text.transform.set_position(Transform.get_vectors_sum(self.transform.get_position(), self.text_offset))
 
     def update_image(self):
         if self.state == NONE:
