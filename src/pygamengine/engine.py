@@ -3,6 +3,7 @@ from typing import Callable
 from .gameobject import GameObject, Rectangle, Text
 from .background import Background
 
+from .ui.ui_element import UIElement
 from .event import EventSystem
 from .custom_events import ColliderEnabledChangedData, ColliderEnabledChangedEventType, ObjectLayerUpdated, CoroutineEnd, VideoResize
 from .custom_events import NewObjectCreated, ObjectDeleted, ObjectStarted, ComponentAddedToObject, GameObjectData, ComponentData, EventData
@@ -46,6 +47,8 @@ class PygameObject(pygame.sprite.DirtySprite):
             if isinstance(self.gameobject, Text):
                 txt: Text = self.gameobject
                 self.image = txt.font.render(txt.text, False, txt.color)
+            elif isinstance(self.gameobject, UIElement):
+                self.image = self.gameobject.current_image
             elif not isinstance(self.gameobject, Rectangle):
                 self.image = PygameObject.sprite_cache.load_sprite(self.gameobject.sprite)
             self.update_original_image(self.image)
@@ -128,7 +131,7 @@ class PygameObject(pygame.sprite.DirtySprite):
         return False
 
     def handle_collisions(self):
-        if not self.gameobject.collider.is_enabled():
+        if getattr(self, 'collider', True) or not self.gameobject.collider.is_enabled():
             return
         if len(self.__filtered_collidable_objects_cache) == 0:
             self.__filtered_collidable_objects_cache = Ngine.get_filtered_collidable_objects(self)
@@ -357,6 +360,10 @@ class PyGameNgine(metaclass=Singleton):
             text: Text = gameobject
             text.font = pygame.font.SysFont(None, 24)
             image = text.font.render(text.text, True, text.color)
+        elif isinstance(gameobject, UIElement):
+            uielement: UIElement = gameobject
+            uielement.construct()
+            image = uielement.current_image
         else:
             # Load sprite
             if gameobject.sprite:
