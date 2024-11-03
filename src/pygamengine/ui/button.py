@@ -20,7 +20,8 @@ class Button(UIElement):
             self, name: str, position: tuple[float, float] = (100,100), size: tuple[float, float] = None, 
             unselected_image: Union[str,tuple[int,int,int,int]] = (255,255,255,255),
             selected_image: Union[str,tuple[int,int,int,int]] = (255,0,0,255),
-            pressed_image: Union[str,tuple[int,int,int,int]] = (0,255,0,255)) -> None:
+            pressed_image: Union[str,tuple[int,int,int,int]] = (0,255,0,255),
+            has_text: bool = True) -> None:
         super().__init__(name, position, size)
         self.__input = Input()
         self.state = NONE
@@ -29,7 +30,13 @@ class Button(UIElement):
         self.unselected_image = unselected_image
         self.selected_image = selected_image
         self.pressed_image = pressed_image
-        self.text = Text(f"button_text_{self.name}", (400,400), (0,0,0,255))
+        if has_text:
+            self.add_text(Text(f"button_text_{self.name}", (400,400), (0,0,0,255)))
+        else:
+            self.text = None
+    
+    def add_text(self, text: Text):
+        self.text = text
         self.children.append(self.text)
     
     def construct(self):
@@ -37,11 +44,15 @@ class Button(UIElement):
         self.selected_image = self.make_button_image(self.selected_image)
         self.pressed_image = self.make_button_image(self.pressed_image)
         self.current_image = self.unselected_image
-        self.text.draw_order = self.draw_order + 1
         
     def make_button_image(self, in_data: Union[str, tuple[int,int,int,int]]):
         if type(in_data) is str:
             image = Button.sprite_cache.load_sprite(in_data)
+            new_width, new_height = image.get_size()
+            if self.width is None or self.height is None:
+                self.width, self.height = new_width, new_height
+            else:
+                self.width, self.height = max(self.width, new_width), max(self.height, new_height)
         else:
             color = in_data
             image = pygame.Surface((self.width, self.height))
@@ -56,7 +67,8 @@ class Button(UIElement):
     def tick(self):
         self.state_machine()
         self.update_image()
-        self.text.transform.set_position(Transform.get_vectors_sum(self.transform.get_position(), self.text_offset))
+        if self.text:
+            self.text.transform.set_position(Transform.get_vectors_sum(self.transform.get_position(), self.text_offset))
 
     def update_image(self):
         if self.state == NONE:
