@@ -16,6 +16,8 @@ class Ship(GameObject):
         self.transform.set_position((Ngine.display[0]/2, Ngine.display[1]/2))
         self.transform.set_rotation(0)
         self.set_collision(True)
+        Ngine.create_new_gameobject(self.bullet)
+        self.bullet.enabled = False
 
     def tick(self):
         if Input().get_key("a"):
@@ -29,10 +31,11 @@ class Ship(GameObject):
         self.transform.set_position((position[0] % Ngine.display[0], position[1] % Ngine.display[1]))
     
     def shoot(self):
-        if Ngine.has_gameobject(self.bullet) == False:
-            self.bullet.transform.set_position(self.transform.get_position())
-            self.bullet.set_direction(self.transform.get_rotation())
-            Ngine.create_new_gameobject(self.bullet)
+        if self.bullet.enabled:
+            return
+        self.bullet.transform.set_position(self.transform.get_position())
+        self.bullet.set_direction(self.transform.get_rotation())
+        self.bullet.enabled = True
     
     def on_collision(self, other: GameObject):
         if isinstance(other, Asteroid):
@@ -62,7 +65,11 @@ class Bullet(Rectangle):
         self.move(*velocity)
         if not Ngine.is_in_display(self.transform.get_position()):
             # out of the screen
-            Ngine.destroy(self)
+            self.disable()
+    
+    def disable(self):
+        self.enabled = False
+        self.set_position((-1,-1))
 
 class Asteroid(Rectangle):
     def __init__(self, x, y, color) -> None:
@@ -88,7 +95,7 @@ class Asteroid(Rectangle):
             # break in 4 small asteroids
             x, y = int(self.width/4), int(self.height/4)
             centre_x, centre_y = self.transform.get_position()
-            Ngine.destroy(other)
+            other.disable()
             Ngine.create_new_gameobject(SmallAsteroid(centre_x - x, centre_y - y, self.color))
             Ngine.create_new_gameobject(SmallAsteroid(centre_x + x, centre_y - y, self.color))
             Ngine.create_new_gameobject(SmallAsteroid(centre_x + x, centre_y + y, self.color))
@@ -102,7 +109,7 @@ class SmallAsteroid(Asteroid):
     
     def on_collision(self, other: GameObject):
         if other.name in ["bullet"]:
-            Ngine.destroy(other)
+            other.disable()
             Ngine.destroy(self)
         
     def on_destroy(self):

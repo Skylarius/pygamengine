@@ -40,7 +40,11 @@ class PygameObject(pygame.sprite.DirtySprite):
 
 
     def update(self) -> None: # Overriding pygame.sprite.DirtySprite.update
+        self.visible = self.gameobject.enabled
         # Tick
+        if not self.gameobject.enabled:
+            return
+        
         self.gameobject.tick()
 
         if self.gameobject.mark_as_to_update:
@@ -131,12 +135,14 @@ class PygameObject(pygame.sprite.DirtySprite):
         return False
 
     def handle_collisions(self):
-        if getattr(self, 'collider', True) or not self.gameobject.collider.is_enabled():
+        if getattr(self.gameobject, 'collider') is None or not self.gameobject.collider.is_enabled():
             return
         if len(self.__filtered_collidable_objects_cache) == 0:
             self.__filtered_collidable_objects_cache = Ngine.get_filtered_collidable_objects(self)
         for pyobj2 in self.__filtered_collidable_objects_cache:
             if self == pyobj2:
+                continue
+            if not pyobj2.gameobject.enabled:
                 continue
             if pyobj2 is None:
                 continue
