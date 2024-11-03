@@ -5,6 +5,7 @@ from .transform import Transform
 
 class GameObject:
     def __init__(self, name: str) -> None:
+        self.enabled = True
         self.name = name
         self.sprite: str = ""
         self.transform = Transform()

@@ -18,20 +18,22 @@ class Ship(GameObject):
         self.boundaries = (100, Ngine.display[0] - 100)
         self.transform.set_position((Ngine.display[0]/2, Ngine.display[1]*4/5))
         self.transform.set_rotation(0)
+        Ngine.create_new_gameobject(self.bullet)
+        self.bullet.enabled = False
         self.set_collision(True)
 
     def tick(self):
-        if Input().get_key_down("a") and self.transform.get_position()[0] > self.boundaries[0]: 
+        if Input().get_key("a") and self.transform.get_position()[0] > self.boundaries[0]: 
             self.move(-self.speed, 0)
-        if Input().get_key_down("d") and self.transform.get_position()[0] < self.boundaries[1]:
+        if Input().get_key("d") and self.transform.get_position()[0] < self.boundaries[1]:
             self.move(self.speed, 0)
         if Input().get_key_down("SPACE"):
             self.shoot()
     
     def shoot(self):
-        if Ngine.has_gameobject(self.bullet) == False:
+        if not self.bullet.enabled:
+            self.bullet.enabled = True
             self.bullet.transform.set_position(self.transform.get_position())
-            Ngine.create_new_gameobject(self.bullet)
     
     def on_collision(self, other: GameObject):
         if other.name == "alien":
@@ -62,7 +64,7 @@ class Bullet(GameObject):
         self.move(0, -self.speed)
         if self.transform.get_position()[1] < 0:
             # out of the screen
-            Ngine.destroy(self)
+            self.enabled = False
     
     def on_collision(self, other: GameObject):
         if other.name == "alien":
