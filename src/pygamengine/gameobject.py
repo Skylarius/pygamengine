@@ -23,7 +23,7 @@ class GameObject:
         self.collider.set_collision(condition)
 
     def is_collider_enabled(self) -> False:
-        return self.collider.is_enabled()
+        return getattr(self, 'collider', False) and self.collider.is_enabled()
 
     def on_collision(self, other: GameObject):
         pass

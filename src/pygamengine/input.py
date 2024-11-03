@@ -46,7 +46,7 @@ class Input(metaclass=Singleton):
     
     def update_pressed_mouse(self):
         local_pressed_mouse = pygame.mouse.get_pressed()
-        self.muouse_up = {i: self.pressed_mouse[i] and not local_pressed_mouse[i]  for i in range(0, len(self.pressed_mouse))}
+        self.mouse_up = {i: self.pressed_mouse[i] and not local_pressed_mouse[i]  for i in range(0, len(self.pressed_mouse))}
         self.mouse_down = {i: not self.pressed_mouse[i] and local_pressed_mouse[i]  for i in range(0, len(self.pressed_mouse))}
         self.pressed_mouse = local_pressed_mouse
 
