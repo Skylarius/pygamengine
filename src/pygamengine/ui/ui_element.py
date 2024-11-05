@@ -4,12 +4,10 @@ from typing import Union
 
 class UIElement(GameObject):
     def __init__(self, name: str, position: tuple[float, float], size: Union[tuple[float, float], None] = None) -> None:
-        self.enabled = True
-        self.name = name
-        self.sprite: str = None
+        super().__init__(name)
         self.current_image = None
-        self.transform = Transform()
         self.transform.set_position(position)
+        self.collider = None
         if size == None:
             self.width = None
             self.height = None
