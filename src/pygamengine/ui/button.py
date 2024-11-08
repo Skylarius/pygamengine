@@ -1,4 +1,4 @@
-from .ui_element import UIElement
+from .ui_element import UIElement, Anchor
 from .text import Text
 import pygame
 from pygamengine.input import Input
@@ -21,8 +21,8 @@ class Button(UIElement):
             unselected_image: Union[str,tuple[int,int,int,int]] = (255,255,255,255),
             selected_image: Union[str,tuple[int,int,int,int]] = (255,0,0,255),
             pressed_image: Union[str,tuple[int,int,int,int]] = (0,255,0,255),
-            has_text: bool = True) -> None:
-        super().__init__(name, position, size)
+            has_text: bool = True, anchor=Anchor.CENTER) -> None:
+        super().__init__(name, position, size, anchor)
         self.__input = Input()
         self.state = NONE
         self.old_state = NONE

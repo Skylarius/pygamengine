@@ -1,13 +1,19 @@
 from pygamengine.gameobject import GameObject
 from pygamengine.transform import Transform
-from typing import Union
+from typing import Tuple, Union
+from enum import Enum
+
+class Anchor(Enum):
+    CENTER = 0
+    TOP_LEFT = 1
 
 class UIElement(GameObject):
-    def __init__(self, name: str, position: tuple[float, float], size: Union[tuple[float, float], None] = None) -> None:
+    def __init__(self, name: str, position: tuple[float, float], size: Union[tuple[float, float], None] = None, anchor: Anchor = Anchor.CENTER) -> None:
         super().__init__(name)
         self.current_image = None
-        self.transform.set_position(position)
         self.collider = None
+        self.anchor: Anchor = anchor
+        self.transform.set_position(position)
         if size == None:
             self.width = None
             self.height = None
@@ -31,3 +37,18 @@ class UIElement(GameObject):
 
     def construct(self):
         pass
+
+    def set_position(self, position: tuple[float, float]):
+        if self.anchor == Anchor.CENTER:
+            self.transform.set_position(position)
+        elif self.anchor == Anchor.TOP_LEFT:
+            self.transform.set_position(Transform.get_vectors_sum(position, (self.width/2, self.height/2)))
+    
+    def get_position(self) -> tuple[float, float]:
+        if self.anchor == Anchor.CENTER:
+            return self.transform.get_position()
+        elif self.anchor == Anchor.TOP_LEFT:
+            return Transform.get_vectors_sum(self.transform.get_position(), (-self.width/2, -self.height/2)) 
+
+    def start(self):
+        self.set_position(self.transform.get_position())
