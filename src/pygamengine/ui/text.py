@@ -1,6 +1,5 @@
 from .ui_element import UIElement, Anchor
 from pygamengine.exceptions import ConstructionOrderError
-from pygamengine.transform import Transform
 import pygame
 
 class Text(UIElement):
