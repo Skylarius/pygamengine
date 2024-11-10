@@ -17,7 +17,7 @@ class Button(UIElement):
     sprite_cache = SpriteCache()
 
     def __init__(
-            self, name: str, position: tuple[float, float] = (100,100), size: tuple[float, float] = None, 
+            self, name: str, position: tuple[float, float] = (100,100), size: tuple[float, float] = (100,100), 
             unselected_image: Union[str,tuple[int,int,int,int]] = (255,255,255,255),
             selected_image: Union[str,tuple[int,int,int,int]] = (255,0,0,255),
             pressed_image: Union[str,tuple[int,int,int,int]] = (0,255,0,255),

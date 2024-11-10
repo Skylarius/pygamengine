@@ -1,12 +1,13 @@
 from .ui_element import UIElement, Anchor
+from typing import Union
 from pygamengine.exceptions import ConstructionOrderError
 import pygame
 
 class Text(UIElement):
-    def __init__(self, name: str, position: tuple[float, float] = (0,0), color=(240,240,240,255), anchor: Anchor = Anchor.CENTER) -> None:
+    def __init__(self, name: str, position: tuple[float, float] = (0,0), color=(240,240,240,255), text: Union[str,None] = None, anchor: Anchor = Anchor.CENTER) -> None:
         super().__init__(name, position, (1,1), anchor)
         self.font: pygame.font.Font = pygame.font.SysFont(None, 24)
-        self.text = name
+        self.text = text or name
         self.color = color
         self.line_spacing = 10
         self.max_width = 300
@@ -15,6 +16,8 @@ class Text(UIElement):
         self.current_image = self.render_text()
 
     def render_text(self) -> pygame.Surface:
+        if self.text == None:
+            return self.font.render("", False, self.color)
         width, height = 0, 0
         max_width = 0
         current_text = ""
