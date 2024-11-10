@@ -13,13 +13,13 @@ class UIElement(GameObject):
         self.current_image = None
         self.collider = None
         self.anchor: Anchor = anchor
-        self.transform.set_position(position)
         if size == None:
             self.width = None
             self.height = None
         else:
             self.width = size[0]
             self.height = size[1]
+        self.transform.set_position(position)
         self.mark_as_to_update = False
         '''Use Ngine.update_draw_order to make it effective after updating'''
         self.draw_order: int = 1000
@@ -40,9 +40,10 @@ class UIElement(GameObject):
 
     def set_position(self, position: tuple[float, float]):
         if self.anchor == Anchor.CENTER:
-            self.transform.set_position(position)
+            new_pos = position
         elif self.anchor == Anchor.TOP_LEFT:
-            self.transform.set_position(Transform.get_vectors_sum(position, (self.width/2, self.height/2)))
+            new_pos = Transform.get_vectors_sum(position, (self.width/2, self.height/2))
+        self.transform.set_position(new_pos)
     
     def get_position(self) -> tuple[float, float]:
         if self.anchor == Anchor.CENTER:
