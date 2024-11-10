@@ -16,6 +16,9 @@ class Panel(UIElement):
         self.border = border
         self.border_color = border_color
     
+    def start(self):
+        super().start()
+    
     def construct(self):
         if isinstance(self.background, str):
             self.current_image = Panel.sprite_cache.load_sprite(self.background)

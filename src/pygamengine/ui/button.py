@@ -44,6 +44,8 @@ class Button(UIElement):
         self.selected_image = self.make_button_image(self.selected_image)
         self.pressed_image = self.make_button_image(self.pressed_image)
         self.current_image = self.unselected_image
+        if self.text:
+            self.text.max_width = self.width
         
     def make_button_image(self, in_data: Union[str, tuple[int,int,int,int]]):
         if type(in_data) is str:

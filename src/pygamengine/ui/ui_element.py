@@ -6,6 +6,9 @@ from enum import Enum
 class Anchor(Enum):
     CENTER = 0
     TOP_LEFT = 1
+    TOP_RIGHT = 2
+    BOTTOM_RIGHT = 3
+    BOTTOM_LEFT = 4
 
 class UIElement(GameObject):
     def __init__(self, name: str, position: tuple[float, float], size: Union[tuple[float, float], None] = None, anchor: Anchor = Anchor.CENTER) -> None:
@@ -43,13 +46,41 @@ class UIElement(GameObject):
             new_pos = position
         elif self.anchor == Anchor.TOP_LEFT:
             new_pos = Transform.get_vectors_sum(position, (self.width/2, self.height/2))
+        elif self.anchor == Anchor.TOP_RIGHT:
+            new_pos = Transform.get_vectors_sum(position, (-self.width/2, self.height/2))
+        elif self.anchor == Anchor.BOTTOM_LEFT:
+            new_pos = Transform.get_vectors_sum(position, (self.width/2, -self.height/2))
+        elif self.anchor == Anchor.BOTTOM_RIGHT:
+            new_pos = Transform.get_vectors_sum(position, (-self.width/2, -self.height/2))
         self.transform.set_position(new_pos)
+
+    def get_position_with_anchor(self, anchor: Anchor):
+        if anchor == Anchor.CENTER:
+            return self.transform.get_position()
+        elif anchor == Anchor.TOP_LEFT:
+            return Transform.get_vectors_sum(self.transform.get_position(), (-self.width/2, -self.height/2))
+        elif anchor == Anchor.TOP_RIGHT:
+            return Transform.get_vectors_sum(self.transform.get_position(), (self.width/2, -self.height/2))
+        elif anchor == Anchor.BOTTOM_LEFT:
+            return Transform.get_vectors_sum(self.transform.get_position(), (-self.width/2, self.height/2))
+        elif anchor == Anchor.BOTTOM_RIGHT:
+            return Transform.get_vectors_sum(self.transform.get_position(), (self.width/2, self.height/2))
     
     def get_position(self) -> tuple[float, float]:
-        if self.anchor == Anchor.CENTER:
-            return self.transform.get_position()
-        elif self.anchor == Anchor.TOP_LEFT:
-            return Transform.get_vectors_sum(self.transform.get_position(), (-self.width/2, -self.height/2)) 
+        return self.get_position_with_anchor(self.anchor)
+        
+    def move_with_children(self, x: int, y: int):
+        super().move(x, y)
+        for c in self.children:
+            c.move(x,y)
+    
+    def set_position_with_children(self, position: tuple[float,float]):
+        old_pos = self.transform.get_position()
+        self.set_position(position)
+        new_pos = self.transform.get_position()
+        delta = Transform.get_vectors_diff(new_pos, old_pos)
+        for c in self.children:
+            c.move_with_children(*delta)
 
     def start(self):
         self.set_position(self.transform.get_position())
