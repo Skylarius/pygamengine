@@ -2,6 +2,7 @@ import context
 from pygamengine import *
 from pygamengine.ui import *
 import os
+import random
 
 from pygamengine.ui.ui_element import Anchor
 
@@ -28,7 +29,6 @@ if __name__ == "__main__":
     def on_button_click():
         button.count += 1
         button.text.set_update(f"You clicked {button.count} times!")
-        button.move(0,1)
     
     button.on_click = on_button_click
     Ngine.create_new_gameobject(button)
@@ -53,27 +53,55 @@ if __name__ == "__main__":
 
     # Create Panel
     panel = Panel("mypanel", (button2.get_position()[0] + button2.width + 30, 30), 
-        (100, 300), (255,255,0), anchor=Anchor.TOP_LEFT, border=10, border_color=(255,0,0)
+        (100, 200), (255,255,0), anchor=Anchor.TOP_LEFT, border=10, border_color=(255,0,0)
     )
-
-    Ngine.create_new_gameobject(panel)
     
+    Ngine.create_new_gameobject(panel)
+    # Create panel description text (to test positioning)
     text2 = Text("panel_description", Transform.get_vectors_sum(panel.get_position(), 
-        (0, panel.height + 30)), text="This one above is a panel", anchor=Anchor.TOP_LEFT
+        (0, panel.height + 30)), text="This one above is a panel", anchor=Anchor.TOP_LEFT, max_width=panel.width
     )
-    text2.max_width = panel.width
     Ngine.create_new_gameobject(text2)
 
     # Create Panel
     textpanel = TextPanel(
         "mytextpanel", 
-        "This text is inside this magical text panel\nAnd this is on another line", 
+        "This text is inside this magical text panel\nAnd this text is on another line", 
         (panel.get_position()[0] + panel.width + 30, 30), 
-        (100, 300), (0,255,0), anchor=Anchor.TOP_LEFT
+        (100, 200), (0,255,0), anchor=Anchor.TOP_LEFT
     )
     textpanel.text.color = (0,0,255)
     Ngine.create_new_gameobject(textpanel)
 
-    Ngine.create_new_gameobject(MovingButton("my_moving_button", position=(button.get_position()[0], button.get_position()[1] + button.height + 30), size=(200,100), anchor=Anchor.TOP_LEFT))
+    # create moving button (defined above)
+    moving_button = MovingButton(
+        "my_moving_button", 
+        position=(button.get_position()[0], button.get_position()[1] + button.height + 30),
+        size=(200,100), anchor=Anchor.TOP_LEFT
+    )
+    Ngine.create_new_gameobject(moving_button)
+
+    def on_click_moving_button():
+        x, y = random.randint(200, 1000), random.randrange(20, 600)
+        textpanel.set_position_with_children((x,y))
+
+    moving_button.on_click = on_click_moving_button
     
+    # Place panel with 4 text on corners
+    pos = (textpanel.get_position()[0] + textpanel.width + 30, 30)
+    bigpanel = Panel("mybigpanel", pos, 
+        (Ngine.display[0] - 30 - pos[0], Ngine.display[1] - 30 - pos[1]), (255,0,255), anchor=Anchor.TOP_LEFT, border=30, border_color=(0,0,255)
+    )
+    Ngine.create_new_gameobject(bigpanel)
+    Ngine.create_new_gameobject(Text("txt_tl", bigpanel.get_position_with_anchor(Anchor.TOP_LEFT), text="TL"))
+    Ngine.create_new_gameobject(Text("txt_tr", bigpanel.get_position_with_anchor(Anchor.TOP_RIGHT), text="TR"))
+    Ngine.create_new_gameobject(Text("txt_bl", bigpanel.get_position_with_anchor(Anchor.BOTTOM_LEFT), text="BL"))
+    Ngine.create_new_gameobject(Text("txt_br", bigpanel.get_position_with_anchor(Anchor.BOTTOM_RIGHT), text="BR"))
+    Ngine.create_new_gameobject(Text("txt_top_left", bigpanel.transform.get_position(), text="*TopLeft", anchor=Anchor.TOP_LEFT))
+    Ngine.create_new_gameobject(Text("txt_top_right", bigpanel.transform.get_position(), text="TopRight*", anchor=Anchor.TOP_RIGHT))
+    Ngine.create_new_gameobject(Text("txt_bottom_left", bigpanel.transform.get_position(), text="_BottomLeft", anchor=Anchor.BOTTOM_LEFT))
+    Ngine.create_new_gameobject(Text("txt_bottom_right", bigpanel.transform.get_position(), text="BottomRight_", anchor=Anchor.BOTTOM_RIGHT))
+
+
+
     Ngine.run_engine()

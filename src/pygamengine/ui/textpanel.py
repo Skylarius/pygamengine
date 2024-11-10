@@ -18,6 +18,7 @@ class TextPanel(Panel):
         self.children.append(self.text)
     
     def tick(self):
+        # super().start()
         self.text.set_position(
             Transform.get_vectors_sum(self.get_position(), (self.padding["left"], self.padding["top"]))
         )
