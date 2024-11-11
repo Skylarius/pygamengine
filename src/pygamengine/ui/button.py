@@ -19,7 +19,7 @@ class Button(UIElement):
             unselected_image: Union[str,tuple[int,int,int,int]] = (255,255,255,255),
             selected_image: Union[str,tuple[int,int,int,int]] = (255,0,0,255),
             pressed_image: Union[str,tuple[int,int,int,int]] = (0,255,0,255),
-            has_text: bool = True, anchor=Anchor.CENTER) -> None:
+            has_text: bool = True, anchor=Anchor.CENTER, initial_text: str = "button_text") -> None:
         super().__init__(name, position, anchor=anchor)
         self.__input = Input()
         if size:
@@ -32,6 +32,7 @@ class Button(UIElement):
         self.selected_image = selected_image
         self.pressed_image = pressed_image
         self.has_text = has_text
+        self.initial_text = initial_text
     
     def add_text(self, text: Text):
         self.text = text
@@ -46,7 +47,7 @@ class Button(UIElement):
         if self.has_text:
             self.add_text(Text(
                 f"button_text_{self.name}", self.transform.get_position(), (0,0,0,255), 
-                anchor=Anchor.CENTER, max_width=self.width
+                anchor=Anchor.CENTER, text=self.initial_text, max_width=self.width
             ))
         else:
             self.text = None
