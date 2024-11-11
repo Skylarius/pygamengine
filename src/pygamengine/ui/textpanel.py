@@ -12,13 +12,15 @@ class TextPanel(Panel):
         super().__init__(name, position, size, background, anchor)
         self.padding = {"top": padding_top, "left": padding_left, "right": padding_right, "bottom": padding_bottom}
         self.text = Text(
-            f"{name}_text", (position[0] + padding_left, position[1] + padding_top), text=text, anchor=Anchor.TOP_LEFT
+            f"{name}_text", (position[0] + padding_left, position[1] + padding_top), 
+            text=text, 
+            anchor=Anchor.TOP_LEFT
         )
         self.text.max_width = self.width - padding_left - padding_right
         self.children.append(self.text)
     
-    def tick(self):
-        # super().start()
+    def start(self):
+        self.set_position(self.transform.get_position())
         self.text.set_position(
-            Transform.get_vectors_sum(self.get_position(), (self.padding["left"], self.padding["top"]))
+            Transform.get_vectors_sum(self.get_position_with_anchor(Anchor.TOP_LEFT), (self.padding["left"], self.padding["top"]))
         )

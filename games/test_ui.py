@@ -11,6 +11,10 @@ class MovingButton(Button):
         super().__init__(name, position, size, anchor=anchor)
         self.speed = 0.5
         self.direction = 1
+    
+    def start(self):
+        super().start()
+        self.text.set_update("MovingButton")
         
     def tick(self):
         super().tick()
@@ -19,7 +23,7 @@ class MovingButton(Button):
             self.direction = -1
         if pos[0] < 0:
             self.direction = 1
-        self.set_position(Transform.get_vectors_sum(self.get_position(),(self.direction * self.speed,0)))
+        self.set_position_with_children(Transform.get_vectors_sum(self.get_position(),(self.direction * self.speed,0)))
 
 if __name__ == "__main__":
     # Create simple button
@@ -101,6 +105,27 @@ if __name__ == "__main__":
     Ngine.create_new_gameobject(Text("txt_top_right", bigpanel.transform.get_position(), text="TopRight*", anchor=Anchor.TOP_RIGHT))
     Ngine.create_new_gameobject(Text("txt_bottom_left", bigpanel.transform.get_position(), text="_BottomLeft", anchor=Anchor.BOTTOM_LEFT))
     Ngine.create_new_gameobject(Text("txt_bottom_right", bigpanel.transform.get_position(), text="BottomRight_", anchor=Anchor.BOTTOM_RIGHT))
+
+    # Create Slider
+    slider = Slider("slider", Transform.get_vectors_sum(moving_button.get_position(),(0, moving_button.height + 30)),
+        Anchor.TOP_LEFT
+    )
+    
+    Ngine.create_new_gameobject(slider)
+
+    text_slider = Text(
+        "slider_text", 
+        Transform.get_vectors_sum(slider.get_position(), (slider.width + 30,0)),
+        anchor=Anchor.TOP_LEFT
+    )
+    Ngine.create_new_gameobject(text_slider)
+
+    def change_slider_text(new_value: float):
+        text_slider.set_update(f"Slider: {new_value:.2f}")
+    
+    slider.on_slider_change = change_slider_text
+        
+
 
 
 
