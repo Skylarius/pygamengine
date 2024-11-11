@@ -3,9 +3,7 @@ from .text import Text
 import pygame
 from pygamengine.input import Input
 from pygamengine.caches import SpriteCache
-from pygamengine.transform import Transform
 from typing import Union
-import logging
 
 NONE = 0
 SELECTED = 1
@@ -17,23 +15,23 @@ class Button(UIElement):
     sprite_cache = SpriteCache()
 
     def __init__(
-            self, name: str, position: tuple[float, float] = (100,100), size: tuple[float, float] = (100,100), 
+            self, name: str, position: tuple[float, float] = (100,100), size: Union[tuple[float, float], None] = None, 
             unselected_image: Union[str,tuple[int,int,int,int]] = (255,255,255,255),
             selected_image: Union[str,tuple[int,int,int,int]] = (255,0,0,255),
             pressed_image: Union[str,tuple[int,int,int,int]] = (0,255,0,255),
             has_text: bool = True, anchor=Anchor.CENTER) -> None:
-        super().__init__(name, position, size, anchor)
+        super().__init__(name, position, anchor=anchor)
         self.__input = Input()
+        if size:
+            self.width = size[0]
+            self.height = size[1]
         self.state = NONE
         self.old_state = NONE
         self.text_offset = (0,0)
         self.unselected_image = unselected_image
         self.selected_image = selected_image
         self.pressed_image = pressed_image
-        if has_text:
-            self.add_text(Text(f"button_text_{self.name}", (400,400), (0,0,0,255)))
-        else:
-            self.text = None
+        self.has_text = has_text
     
     def add_text(self, text: Text):
         self.text = text
@@ -43,11 +41,17 @@ class Button(UIElement):
         self.unselected_image = self.make_button_image(self.unselected_image)
         self.selected_image = self.make_button_image(self.selected_image)
         self.pressed_image = self.make_button_image(self.pressed_image)
+        self.width, self.height = self.unselected_image.get_size()
         self.current_image = self.unselected_image
-        if self.text:
-            self.text.max_width = self.width
+        if self.has_text:
+            self.add_text(Text(
+                f"button_text_{self.name}", self.transform.get_position(), (0,0,0,255), 
+                anchor=Anchor.CENTER, max_width=self.width
+            ))
+        else:
+            self.text = None
         
-    def make_button_image(self, in_data: Union[str, tuple[int,int,int,int]]):
+    def make_button_image(self, in_data: Union[str, tuple[int,int,int,int]]) -> pygame.Surface:
         if type(in_data) is str:
             image = Button.sprite_cache.load_sprite(in_data)
             new_width, new_height = image.get_size()
@@ -69,8 +73,8 @@ class Button(UIElement):
     def tick(self):
         self.state_machine()
         self.update_image()
-        if self.text:
-            self.text.transform.set_position(Transform.get_vectors_sum(self.transform.get_position(), self.text_offset))
+        # if self.text:
+        #     self.text.transform.set_position(Transform.get_vectors_sum(self.transform.get_position(), self.text_offset))
 
     def update_image(self):
         if self.state == NONE:
@@ -106,6 +110,8 @@ class Button(UIElement):
         if self.state == RELEASED:
             self.state = NONE
             return
-
+    
+    def start(self):
+        self.set_position_with_children(self.transform.get_position())
 
         
