@@ -108,7 +108,7 @@ if __name__ == "__main__":
 
     # Create Slider
     slider_horizontal = Slider("slider_h", Transform.get_vectors_sum(moving_button.get_position(),(0, moving_button.height + 30)),
-        Anchor.TOP_LEFT
+        Anchor.TOP_LEFT, start_value=12.5, max_value=14, min_value=12
     )
 
     Ngine.create_new_gameobject(slider_horizontal)   
@@ -126,7 +126,8 @@ if __name__ == "__main__":
     Ngine.create_new_gameobject(text_slider_horizontal)
 
     slider_vertical = Slider("slider_y", Transform.get_vectors_sum(slider_horizontal.get_position(),(0, 30)),
-        Anchor.TOP_LEFT, bar_size=(20, 150), slider_type=SliderType.Vertical
+        Anchor.TOP_LEFT, bar_size=(20, 150), slider_type=SliderType.Vertical,
+        max_value=100, min_value=50, start_value=62.5
     )
 
     Ngine.create_new_gameobject(slider_vertical)
