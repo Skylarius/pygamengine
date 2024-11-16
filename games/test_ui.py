@@ -107,26 +107,40 @@ if __name__ == "__main__":
     Ngine.create_new_gameobject(Text("txt_bottom_right", bigpanel.transform.get_position(), text="BottomRight_", anchor=Anchor.BOTTOM_RIGHT))
 
     # Create Slider
-    slider = Slider("slider", Transform.get_vectors_sum(moving_button.get_position(),(0, moving_button.height + 30)),
+    slider_horizontal = Slider("slider_h", Transform.get_vectors_sum(moving_button.get_position(),(0, moving_button.height + 30)),
         Anchor.TOP_LEFT
     )
-    
-    Ngine.create_new_gameobject(slider)
 
-    text_slider = Text(
-        "slider_text", 
-        Transform.get_vectors_sum(slider.get_position(), (slider.width + 30,0)),
+    Ngine.create_new_gameobject(slider_horizontal)   
+
+    def change_slider_horizontal_text(new_value: float):
+        text_slider_horizontal.set_update(f"Slider: {new_value:.2f}")
+    
+    slider_horizontal.on_slider_change = change_slider_horizontal_text
+
+    text_slider_horizontal = Text(
+        "slider_horizontal_text", 
+        Transform.get_vectors_sum(slider_horizontal.get_position(), (slider_horizontal.width + 30,0)),
         anchor=Anchor.TOP_LEFT
     )
-    Ngine.create_new_gameobject(text_slider)
+    Ngine.create_new_gameobject(text_slider_horizontal)
 
-    def change_slider_text(new_value: float):
-        text_slider.set_update(f"Slider: {new_value:.2f}")
+    slider_vertical = Slider("slider_y", Transform.get_vectors_sum(slider_horizontal.get_position(),(0, 30)),
+        Anchor.TOP_LEFT, bar_size=(20, 150), slider_type=SliderType.Vertical
+    )
+
+    Ngine.create_new_gameobject(slider_vertical)
+
+    def change_slider_vertical_text(new_value: float):
+        text_slider_vertical.set_update(f"Slider: {new_value:.2f}")
     
-    slider.on_slider_change = change_slider_text
-        
+    slider_vertical.on_slider_change = change_slider_vertical_text
 
-
-
+    text_slider_vertical = Text(
+        "slider_vertical_text", 
+        Transform.get_vectors_sum(slider_vertical.get_position(), (0,slider_vertical.height + 30)),
+        anchor=Anchor.TOP_LEFT
+    )
+    Ngine.create_new_gameobject(text_slider_vertical)
 
     Ngine.run_engine()
