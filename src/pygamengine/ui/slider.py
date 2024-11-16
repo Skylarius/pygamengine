@@ -121,7 +121,8 @@ class Slider(UIElement):
     def start(self):
         self.set_position(self.transform.get_position())
         self.indicator.transform.set_position(self.transform.get_position())
-    
+        self.update_indicator_position_with_value(self.__value)
+
     def set_value(self, value: float):
         self.__value = value
         self.old_value = value
@@ -131,21 +132,20 @@ class Slider(UIElement):
     def update_value_with_indicator_position(self, position: tuple[float, float]):
         if self.slider_type == SliderType.Horizontal:
             t = (position[0] - (self.transform.get_position()[0] - self.width/2)) / self.width
-            value = self.min_value + t*self.max_value    
         elif self.slider_type == SliderType.Vertical:
             t = (-position[1] + (self.transform.get_position()[1] + self.height/2)) / self.height    
-            value = t*self.max_value - self.min_value
+        value = self.min_value + t*(self.max_value - self.min_value)
         if value != self.old_value:
             self.set_value(value)
     
     def update_indicator_position_with_value(self, value: float):
         pos = self.transform.get_position()
-        t = (value - self.min_value)/self.max_value
+        t = (value - self.min_value)/(self.max_value - self.min_value)
         if self.slider_type == SliderType.Horizontal:
             indicator_pos_x = t*self.width + (pos[0] - self.width/2)
             self.indicator.set_position((indicator_pos_x, pos[1]))
         elif self.slider_type == SliderType.Vertical:
-            indicator_pos_y = t*self.height + (pos[1] - self.height/2)
+            indicator_pos_y = (pos[1] + self.height/2) - t* self.height
             self.indicator.set_position((pos[0], indicator_pos_y))
     
     def tick(self):
