@@ -4,10 +4,13 @@ from pygamengine.exceptions import ConstructionOrderError
 import pygame
 
 class TextRenderer:
-    def __init__(self, font: Union[pygame.font.Font, None], color=(240,240,240,255), max_width=100) -> None:
+    def __init__(self, font: Union[pygame.font.Font, None], color=(240,240,240,255), max_width=100,
+        max_lines=999, remove_lines_on_top: bool = False) -> None:
         self.font = font or pygame.font.SysFont(None, 24)
         self.color = color
         self.max_width = max_width
+        self.max_lines = max_lines
+        self.remove_lines_on_top = remove_lines_on_top
         self.init()
         
     def init(self):
@@ -37,6 +40,12 @@ class TextRenderer:
         self.current_line_text = ""
     
     def render(self) -> pygame.Surface:
+        #Clamp lines accordingly
+        if len(self.lines) > self.max_lines:
+            if self.remove_lines_on_top:
+                self.lines = self.lines[len(self.lines) - self.max_lines:]
+            else:
+                self.lines = self.lines[:self.max_lines]
         width = self.current_max_width
         height = self.height
         rendered_text_image = pygame.surface.Surface((width, height), pygame.SRCALPHA)
@@ -47,13 +56,17 @@ class TextRenderer:
         return rendered_text_image
 
 class Text(UIElement):
-    def __init__(self, name: str, position: tuple[float, float] = (0,0), color=(240,240,240,255), text: Union[str,None] = None, anchor: Anchor = Anchor.CENTER, max_width=300) -> None:
+    def __init__(self, name: str, position: tuple[float, float] = (0,0), color=(240,240,240,255), 
+                text: Union[str,None] = None, anchor: Anchor = Anchor.CENTER, max_width=300,
+                max_lines = 999, remove_lines_on_top: bool = False) -> None:
         super().__init__(name, position, (1,1), anchor)
         self.font: pygame.font.Font = pygame.font.SysFont(None, 24)
         self.text = text or name
         self.color = color
         self.line_spacing = 10
         self.max_width = max_width
+        self.max_lines = max_lines
+        self.remove_lines_on_top = remove_lines_on_top
 
     def construct(self):
         self.current_image = self.render_text()
@@ -61,7 +74,7 @@ class Text(UIElement):
     def render_text(self) -> pygame.Surface:
         if self.text == None:
             return self.font.render("", False, self.color)
-        renderer = TextRenderer(self.font, self.color, self.max_width)
+        renderer = TextRenderer(self.font, self.color, self.max_width, self.max_lines, self.remove_lines_on_top)
         word = ""
         for char in self.text:
             if char == " ":
@@ -69,6 +82,7 @@ class Text(UIElement):
                 renderer.insert_word(word)
                 word=""
             elif char == "\n":
+                renderer.insert_word(word)
                 renderer.make_new_line()
                 word=""
             else:
@@ -106,6 +120,7 @@ class Text(UIElement):
         max_width = max(max_width, width)
         lines.append(current_text)
         height += line_spacing
+        
         self.width = max_width
         self.height = height
         rendered_text_image = pygame.surface.Surface((max_width, height), pygame.SRCALPHA)
