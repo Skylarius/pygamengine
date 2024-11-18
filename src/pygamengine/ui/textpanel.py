@@ -20,6 +20,9 @@ class TextPanel(Panel):
         self.children.append(self.text)
     
     def start(self):
+        self.update_text_position()
+    
+    def update_text_position(self):
         self.set_position(self.transform.get_position())
         self.text.set_position(
             Transform.get_vectors_sum(self.get_position_with_anchor(Anchor.TOP_LEFT), (self.padding["left"], self.padding["top"]))
