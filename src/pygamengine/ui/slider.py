@@ -70,7 +70,7 @@ class Slider(UIElement):
             bar_color: Union[tuple[int,int,int,int], None] = (0,255,255),
             indicator_image: Union[str, None] = None, indicator_size: Union[tuple[float, float], None] = (30,30),
             indicator_color: Union[tuple[int,int,int,int], None] = (0,0,255),
-            min_value = 0, max_value = 10, start_value = 5,
+            min_value = 0, max_value = 10, start_value = 5, step = 0,
             slider_type: SliderType = SliderType.Horizontal
         ) -> None:
         super().__init__(name, position, None, anchor)
@@ -85,6 +85,7 @@ class Slider(UIElement):
         self.__value = start_value
         self.value = self.__value
         self.old_value = self.__value
+        self.step = step
         self.slider_type = slider_type
                 
     def construct(self):
@@ -135,6 +136,9 @@ class Slider(UIElement):
         elif self.slider_type == SliderType.Vertical:
             t = (-position[1] + (self.transform.get_position()[1] + self.height/2)) / self.height    
         value = self.min_value + t*(self.max_value - self.min_value)
+        if self.step > 0:
+            value = int(value / self.step) * self.step
+            self.update_indicator_position_with_value(value)
         if value != self.old_value:
             self.set_value(value)
     
