@@ -285,8 +285,7 @@ class PyGameNgine(metaclass=Singleton):
 
     
     def game_over(self):
-        pygame.quit()
-        sys.exit()
+        pygame.event.post(pygame.event.Event(QUIT))
     
     def get_screen(self) -> pygame.Surface:
         return self.__screen
