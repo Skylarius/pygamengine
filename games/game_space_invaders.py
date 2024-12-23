@@ -15,8 +15,8 @@ class Ship(GameObject):
         self.__setup_on_alien_deletion()
 
     def start(self):
-        self.boundaries = (100, Ngine.display[0] - 100)
-        self.transform.set_position((Ngine.display[0]/2, Ngine.display[1]*4/5))
+        self.boundaries = (100, Ngine.get_display()[0] - 100)
+        self.transform.set_position((Ngine.get_display()[0]/2, Ngine.get_display()[1]*4/5))
         self.transform.set_rotation(0)
         Ngine.create_new_gameobject(self.bullet)
         self.bullet.enabled = False
@@ -94,7 +94,7 @@ class Alien(GameObject):
         self.ignore_collisions_with_class(Alien)
 
     def start(self):
-        Alien.boundaries = (30, Ngine.display[0] - 30)
+        Alien.boundaries = (30, Ngine.get_display()[0] - 30)
         self.set_collision(True)
     
     def tick(self):
@@ -121,15 +121,15 @@ class Alien(GameObject):
 
 
 if __name__ == "__main__":
-    # Ngine.set_display(1920,1080, fullscreen=False)
+    Ngine.set_display(1280,720, fullscreen=True)
     Ngine.set_background(Background("src/background/space.jpg", "src/background/space1080p.png"))
     ship = Ship()
     Ngine.create_new_gameobject(ship)
-    for i in range(30, int(Ngine.display[0]*2/3) , 150):
-        for j in range (40, int(Ngine.display[1]/2), 100):
+    for i in range(30, int(Ngine.get_display()[0]*2/3) , 150):
+        for j in range (40, int(Ngine.get_display()[1]/2), 100):
             alien = Alien()
             alien.start_height = j
             alien.transform.set_position((i, j))
             Ngine.create_new_gameobject(alien)
-    Alien.boundaries = (30, Ngine.display[0] - 30)
+    Alien.boundaries = (30, Ngine.get_display()[0] - 30)
     Ngine.run_engine()

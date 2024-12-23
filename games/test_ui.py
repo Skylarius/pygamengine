@@ -19,13 +19,16 @@ class MovingButton(Button):
     def tick(self):
         super().tick()
         pos = self.get_position()
-        if pos[0] > Ngine.display[0] - self.width:
+        if pos[0] > Ngine.get_display()[0] - self.width:
             self.direction = -1
         if pos[0] < 0:
             self.direction = 1
         self.set_position_with_children(Transform.get_vectors_sum(self.get_position(),(self.direction * self.speed,0)))
 
 if __name__ == "__main__":
+    Ngine.set_caption("TEST UI")
+    #Ngine.set_display(1920,1080)
+    
     # Create simple button
     button = Button("b", (30, 30), size=(200,100), anchor=Anchor.TOP_LEFT)
     button.count = 0
@@ -98,7 +101,7 @@ if __name__ == "__main__":
     # Place panel with 4 text on corners
     pos = (textpanel.get_position()[0] + textpanel.width + 30, 30)
     bigpanel = Panel("mybigpanel", pos, 
-        (Ngine.display[0] - 30 - pos[0], Ngine.display[1] - 30 - pos[1]), (255,0,255), anchor=Anchor.TOP_LEFT, border=30, border_color=(0,0,255)
+        (Ngine.get_display()[0] - 30 - pos[0], Ngine.get_display()[1] - 30 - pos[1]), (255,0,255), anchor=Anchor.TOP_LEFT, border=30, border_color=(0,0,255)
     )
     Ngine.create_new_gameobject(bigpanel)
     Ngine.create_new_gameobject(Text("txt_tl", bigpanel.get_position_with_anchor(Anchor.TOP_LEFT), text="TL"))

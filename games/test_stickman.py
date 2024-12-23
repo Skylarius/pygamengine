@@ -8,11 +8,11 @@ class Stickman(GameObject):
     def __init__(self):
         super().__init__("ship")
         self.speed = 4
-        self.boundaries = [(100, Ngine.display[0] - 100), (100, Ngine.display[1] - 100)]
+        self.boundaries = [(100, Ngine.get_display()[0] - 100), (100, Ngine.get_display()[1] - 100)]
         self.sprite = "src/sprites/animations/stickman/stick_0.png"
 
     def start(self):
-        self.transform.set_position((Ngine.display[0]/2, 600))
+        self.transform.set_position((Ngine.get_display()[0]/2, 600))
         animator: Animator = Ngine.add_new_component(Animator(), self)
         # Setup walk_right
         animation_right = Animation("stick_walk_right", Frame.make_frames_from_sprites_in_folder("src/sprites/animations/stickman",10))

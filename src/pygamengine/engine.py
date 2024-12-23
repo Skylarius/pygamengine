@@ -180,9 +180,10 @@ class PyGameNgine(metaclass=Singleton):
         self.__clock = pygame.time.Clock()
         self.__input = Input()
         # flags = FULLSCREEN | DOUBLEBUF
-        
-        self.set_display(1280, 720)
-        self.set_background_color(0)
+        self.__is_display_set = False
+
+        # Deprecated, do not use it
+        self.display = (1280, 720)
 
         # Start CoroutineSystem
         self.__coroutine_system = CoroutineSystem()
@@ -210,19 +211,28 @@ class PyGameNgine(metaclass=Singleton):
         vsync_value = 0 if not vsync else 1
         # flags = FULLSCREEN | DOUBLEBUF
         self.display = x, y
+        self.__display = x, y
         self.__display_flags = flags
         self.__display_vsync = vsync_value
-        self.__screen = pygame.display.set_mode(self.display, flags, 16, vsync=vsync_value)
+        self.__screen = pygame.display.set_mode(self.__display, flags, 16, vsync=vsync_value)
         self.__background = pygame.Surface(self.__screen.get_size())
         r = self.__background.get_rect()
         self.__background.convert()
+        self.__is_display_set = True
+    
+    def get_display(self):
+        return self.__display
     
     def set_background(self, background: Background):
-        self.__background.blit(pygame.image.load(background.get_path(self.display)), (0,0))
+        self.__background.blit(pygame.image.load(background.get_path(self.__display)), (0,0))
         self.__background.convert()
     
     def set_background_color(self, color: pygame.Color):
         self.__background.fill(color)
+
+    def setup_default_display(self):
+        self.set_display(1280, 720)
+        self.set_background_color(0)
     
     def setup_event_system(self):
         event_system = EventSystem()
@@ -355,6 +365,8 @@ class PyGameNgine(metaclass=Singleton):
         return self.sprite_cache.load_sprite(sprite_path)
         
     def create_new_gameobject(self, gameobject: GameObject) -> PygameObject:
+        if not self.__is_display_set:
+            self.setup_default_display()
         additional_gameobjects_to_create = []
         image = pygame.Surface((1,1))
         if isinstance(gameobject, Rectangle):
@@ -413,7 +425,7 @@ class PyGameNgine(metaclass=Singleton):
             ObjectLayerUpdated(pygameobject.gameobject)         
     
     def is_in_display(self, position: tuple[2]):
-        return 0 < position[0] < self.display[0] and 0 < position[1] < self.display[1]
+        return 0 < position[0] < self.__display[0] and 0 < position[1] < self.__display[1]
     
     def add_new_component(self, component: Component, gameobject: GameObject):
         pygameobject = self.__get_pygameobject(gameobject)

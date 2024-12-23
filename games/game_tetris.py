@@ -15,14 +15,14 @@ class TetrisBlock(Rectangle):
         self.block_position = (0,0)
         self.fake = fake
         Blocks.append(self)
-        self.transform.set_position((Ngine.display[0]/2, TetrisBlock.grid_step))
+        self.transform.set_position((Ngine.get_display()[0]/2, TetrisBlock.grid_step))
     
     def start(self):
         self.set_collision(False)
     
     def set_block_position(self, x: int, y: int):
         self.block_position = x,y
-        self.transform.set_position((Ngine.display[0]/2 + x*TetrisBlock.grid_step, y*TetrisBlock.grid_step))
+        self.transform.set_position((Ngine.get_display()[0]/2 + x*TetrisBlock.grid_step, y*TetrisBlock.grid_step))
     
     def move_left(self):
         self.set_block_position(self.block_position[0] - 1, self.block_position[1])
@@ -321,7 +321,7 @@ class TetrisInfo(Text):
     
     def start(self):
         self.transform.set_position(
-            (Ngine.display[0]*4/5, Ngine.display[1]/2)
+            (Ngine.get_display()[0]*4/5, Ngine.get_display()[1]/2)
         )
 
 line_spacing = 20
@@ -351,6 +351,7 @@ def set_stats_text():
 if __name__ == "__main__":
     # Set frame
     # Ngine.set_display(TetrisBlock.grid_step * 14, TetrisBlock.grid_step * 25)
+    Ngine.set_caption("Tetris")
     for i in range(0, 21):
         block = TetrisBlock(fake=True)
         block.set_block_position(-6,i)
