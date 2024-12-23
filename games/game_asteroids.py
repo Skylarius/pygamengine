@@ -139,6 +139,7 @@ def respawn():
 wave_number = 0
 
 if __name__ == "__main__":
+    Ngine.set_caption("Asteroids")
     Ngine.create_new_gameobject(Ship())
     add_asteroids(3 + wave_number)
     Ngine.run_engine()

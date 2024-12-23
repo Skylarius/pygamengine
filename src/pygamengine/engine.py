@@ -192,6 +192,9 @@ class PyGameNgine(metaclass=Singleton):
 
         self.setup_event_system()
     
+    def set_caption(self, caption: str):
+        pygame.display.set_caption(caption)
+    
     def set_display(self, x: int, y: int, color: pygame.Color = 0, in_flags: int = 0, fullscreen: bool = False, resizable: bool = True, scaled: bool = True, vsync: bool = True):
         # Create The Backgound
         if in_flags > 0:
