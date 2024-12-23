@@ -8,14 +8,14 @@ class PongObject(Rectangle):
         self.set_collision(True)
     
     def start(self):
-        self.boundaries = (100, Ngine.display[1] - 100)
+        self.boundaries = (100, Ngine.get_display()[1] - 100)
 
 
 class Player(PongObject):
     def __init__(self) -> None:
         super().__init__("player", 50, 150)
         self.speed = 10
-        self.transform.set_position((50, int(Ngine.display[1]/2)))
+        self.transform.set_position((50, int(Ngine.get_display()[1]/2)))
     
     
     def tick(self):
@@ -34,7 +34,7 @@ class Ball(PongObject):
         self.speed = 5
         self.direction_x = 1
         self.direction_y = -1
-        self.transform.set_position((int(Ngine.display[0]/2), int(Ngine.display[1]/2)))
+        self.transform.set_position((int(Ngine.get_display()[0]/2), int(Ngine.get_display()[1]/2)))
     
     def tick(self):
         next_move_y = self.transform.get_position()[1] + self.speed*self.direction_y
@@ -46,7 +46,7 @@ class Ball(PongObject):
             Ngine.get_gameobjects_by_name("score")[0].gameobject.on_score_opponent()
             self.init_ball()
         
-        if self.transform.get_position()[0] > Ngine.display[0]:
+        if self.transform.get_position()[0] > Ngine.get_display()[0]:
             Ngine.get_gameobjects_by_name("score")[0].gameobject.on_score_player()
             self.init_ball()
             Ngine.get_gameobjects_by_name("opponent")[0].gameobject.speed+=1
@@ -63,7 +63,7 @@ class Opponent(PongObject):
     def __init__(self) -> None:
         super().__init__("opponent", 50, 150)
         self.speed = 8
-        self.transform.set_position((Ngine.display[0] - 50, int(Ngine.display[1]/2)))
+        self.transform.set_position((Ngine.get_display()[0] - 50, int(Ngine.get_display()[1]/2)))
     
     def tick(self):
         ball = Ngine.get_gameobjects_by_name("ball")[0]
@@ -80,7 +80,7 @@ class Score(Text):
         self.player_score = 0
         self.opponent_score = 0
         self.text = f"Player {self.player_score} || {self.opponent_score} Opponent"
-        self.transform.set_position((int(Ngine.display[0]/2), int(Ngine.display[1]/2)))
+        self.transform.set_position((int(Ngine.get_display()[0]/2), int(Ngine.get_display()[1]/2)))
 
     def on_score_player(self):
         self.player_score+=1
@@ -94,6 +94,8 @@ class Score(Text):
 
 
 if __name__ == "__main__":
+    Ngine.set_caption("Pong")
+    Ngine.set_display(1920,1080)
     Ngine.create_new_gameobject(Player())
     Ngine.create_new_gameobject(Opponent())
     Ngine.create_new_gameobject(Ball())

@@ -13,7 +13,7 @@ class Ship(GameObject):
         self.bullet = Bullet()
 
     def start(self):
-        self.transform.set_position((Ngine.display[0]/2, Ngine.display[1]/2))
+        self.transform.set_position((Ngine.get_display()[0]/2, Ngine.get_display()[1]/2))
         self.transform.set_rotation(0)
         self.set_collision(True)
         Ngine.create_new_gameobject(self.bullet)
@@ -28,7 +28,7 @@ class Ship(GameObject):
             self.shoot()
 
         position = self.transform.get_position()
-        self.transform.set_position((position[0] % Ngine.display[0], position[1] % Ngine.display[1]))
+        self.transform.set_position((position[0] % Ngine.get_display()[0], position[1] % Ngine.get_display()[1]))
     
     def shoot(self):
         if self.bullet.enabled:
@@ -88,7 +88,7 @@ class Asteroid(Rectangle):
         velocity = reduce(product, self.direction)
         self.move(*velocity)
         position = self.transform.get_position()
-        self.transform.set_position((position[0] % Ngine.display[0], position[1] % Ngine.display[1]))
+        self.transform.set_position((position[0] % Ngine.get_display()[0], position[1] % Ngine.get_display()[1]))
 
     def on_collision(self, other: GameObject):
         if other.name in ["bullet"]:
@@ -128,8 +128,8 @@ def add_asteroids(n):
         (153, 37, 190, 255)
     ]
     for _ in range(0, n):
-        x = random.randint(0, Ngine.display[0])
-        y = random.randint(-int(Ngine.display[1]/4), int(Ngine.display[1]/4))
+        x = random.randint(0, Ngine.get_display()[0])
+        y = random.randint(-int(Ngine.get_display()[1]/4), int(Ngine.get_display()[1]/4))
         color = colors[random.randint(0, 3)]
         Ngine.create_new_gameobject(Asteroid(x,y,color))
 
@@ -140,6 +140,7 @@ wave_number = 0
 
 if __name__ == "__main__":
     Ngine.set_caption("Asteroids")
+    Ngine.set_display(1920,1080)
     Ngine.create_new_gameobject(Ship())
     add_asteroids(3 + wave_number)
     Ngine.run_engine()
