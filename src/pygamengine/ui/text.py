@@ -58,9 +58,9 @@ class TextRenderer:
 class Text(UIElement):
     def __init__(self, name: str, position: tuple[float, float] = (0,0), color=(240,240,240,255), 
                 text: Union[str,None] = None, anchor: Anchor = Anchor.CENTER, max_width=300,
-                max_lines = 999, remove_lines_on_top: bool = False) -> None:
+                max_lines = 999, remove_lines_on_top: bool = False, font_size=24) -> None:
         super().__init__(name, position, (1,1), anchor)
-        self.font: pygame.font.Font = pygame.font.SysFont(None, 24)
+        self.font: pygame.font.Font = pygame.font.SysFont(None, font_size)
         self.text = text or name
         self.color = color
         self.line_spacing = 10
@@ -70,6 +70,9 @@ class Text(UIElement):
 
     def construct(self):
         self.current_image = self.render_text()
+    
+    def set_font_size(self, size: int):
+        self.font = self.font.__class__(None, size)
 
     def render_text(self) -> pygame.Surface:
         if self.text == None:
