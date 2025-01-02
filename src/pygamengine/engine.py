@@ -181,6 +181,8 @@ class PyGameNgine(metaclass=Singleton):
         self.__input = Input()
         # flags = FULLSCREEN | DOUBLEBUF
         self.__is_display_set = False
+        self.__is_running = False
+        self.__objects_instanced_before_running = list[GameObject]()
 
         # Deprecated, do not use it
         self.display = (1280, 720)
@@ -392,7 +394,10 @@ class PyGameNgine(metaclass=Singleton):
         if self.__all_sprites:
             self.__all_sprites.add(pygameobject)
         NewObjectCreated(gameobject)
-        ObjectStarted(gameobject)
+        if Ngine.__is_running:
+            ObjectStarted(gameobject)
+        else:
+            self.__objects_instanced_before_running.append(gameobject)
         logging.debug(f"+Created {gameobject}")
         for g in additional_gameobjects_to_create:
             Ngine.create_new_gameobject(g)
@@ -439,6 +444,11 @@ class PyGameNgine(metaclass=Singleton):
     def run_engine(self):
         # Prepare dirty sprites
         self.__all_sprites = pygame.sprite.LayeredDirty(self.__pygameobjects)
+
+        # Execute start on all objects instanced before running
+        for g in self.__objects_instanced_before_running:
+            ObjectStarted(g)
+        self.__objects_instanced_before_running.clear()
         
         # Display background
         self.__all_sprites.clear(self.__screen, self.__background)
@@ -447,8 +457,8 @@ class PyGameNgine(metaclass=Singleton):
             pygameobject.rect.size = pygameobject.image.get_size()
         
         # Start infinite loop
-        running = True
-        while running:
+        self.__is_running = True
+        while self.__is_running:
             # Execute Start and Tick (now using DirtySprite update function)
             self.__all_sprites.update()
             
@@ -470,7 +480,7 @@ class PyGameNgine(metaclass=Singleton):
             # Update
             for event in pygame.event.get():
                 if event.type == QUIT:
-                    running = False
+                    self.__is_running = False
                 if event.type == VIDEORESIZE:
                     pygame.display.update(self.__background.get_rect())
                     VideoResize(event.dict["size"])
