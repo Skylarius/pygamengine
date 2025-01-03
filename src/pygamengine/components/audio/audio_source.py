@@ -1,5 +1,6 @@
 import pygame
-from .audio_listener import AudioListener
+from .audio_listener import AudioListener, SpatialAudioClip
+from pygamengine.engine import PyGameNgine
 
 class AudioSource:
     def __init__(self, source_path: str, volume: float = 1):
@@ -32,8 +33,17 @@ class AudioEffect(AudioSource):
         self.source = None
     
     def play(self):
-        # SHOULD REQUEST TO PLAY THE SOUND TO THE AUDIO LISTENER
-        AudioListener().request_play_sound(self.source)
+        AudioListener().request_play_sound(SpatialAudioClip(self.source))
+    
+    def play_spatial_sound(self, position_x: float):
+        '''
+        DOESN'T WORK. Pygame doesn't support multichannel audio temporarily
+        '''
+        center_x = PyGameNgine().get_display()[0]*0.5
+        volume = self.source.get_volume()
+        volume_right = (1 if position_x > center_x else position_x/center_x)*volume
+        volume_left = (1 if position_x < center_x else 2 - position_x/center_x)*volume
+        AudioListener().request_play_sound(SpatialAudioClip(self.source, volume_left, volume_right))
 
 class AudioBackgroundMusic(AudioSource):
     '''AudioBackgroundMusic is a class that represents a background music that can be played,
