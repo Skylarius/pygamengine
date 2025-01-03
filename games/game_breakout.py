@@ -1,6 +1,6 @@
 import context
 from pygamengine import *
-from pygamengine.components.audio import AudioEffect, AudioListener
+from pygamengine.components import AudioEffect, AudioListener
 from pygamengine.coroutines import RunAfterSeconds, Coroutine, WaitSeconds
 import random
 
@@ -29,6 +29,7 @@ class Ball(Rectangle):
         self.init_ball()
         self.audio_effect_bounce = AudioEffect("src/audio/boing.mp3")
         self.audio_effect_break = AudioEffect("src/audio/break.mp3")
+        self.audio_effect_death = AudioEffect("src/audio/hurt.mp3")
         
     def start(self):
         self.boundaries = [10, Ngine.get_display()[0] - 10]
@@ -50,6 +51,7 @@ class Ball(Rectangle):
         self.move(self.speed*self.direction_x, self.speed*self.direction_y)
 
         if self.transform.get_position()[1] > Ngine.get_display()[1]:
+            self.audio_effect_death.play()
             self.transform.set_position((-100,-100))
             self.speed = 0
             RunAfterSeconds(2, self.init_ball)

@@ -1,6 +1,5 @@
 import pygame
 from .audio_listener import AudioListener, SpatialAudioClip
-from pygamengine.engine import PyGameNgine
 
 class AudioSource:
     def __init__(self, source_path: str, volume: float = 1):
@@ -39,6 +38,7 @@ class AudioEffect(AudioSource):
         '''
         DOESN'T WORK. Pygame doesn't support multichannel audio temporarily
         '''
+        from pygamengine.engine import PyGameNgine
         center_x = PyGameNgine().get_display()[0]*0.5
         volume = self.source.get_volume()
         volume_right = (1 if position_x > center_x else position_x/center_x)*volume
