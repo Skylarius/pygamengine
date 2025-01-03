@@ -1,5 +1,6 @@
 import context
 from pygamengine import *
+from pygamengine.components.audio import AudioEffect, AudioListener
 from pygamengine.coroutines import RunAfterSeconds, Coroutine, WaitSeconds
 import random
 
@@ -14,6 +15,7 @@ class Player(Rectangle):
         self.start_y = self.transform.get_position()[1]
         self.boundaries = [int(self.width/2), Ngine.get_display()[0] - int(self.width/2)]
         self.set_collision(True)
+        self.audio_listener = Ngine.add_new_component(AudioListener(), self)
     
     def tick(self):
         x, y = Input().get_mouse_position()
@@ -25,6 +27,7 @@ class Ball(Rectangle):
         super().__init__("ball", 20, 20)
         self.max_height = 10
         self.init_ball()
+        self.audio_effect = AudioEffect("src/audio/boing.mp3")
         
     def start(self):
         self.boundaries = [10, Ngine.get_display()[0] - 10]
@@ -57,6 +60,8 @@ class Ball(Rectangle):
             self.direction_y*=-1
             self.direction_x = 2*(self.transform.get_position()[0] - other.transform.get_position()[0])/other.width
             self.speed+=0.1
+            self.audio_effect.play()
+
 
 
 class Brick(Rectangle):
