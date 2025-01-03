@@ -27,7 +27,8 @@ class Ball(Rectangle):
         super().__init__("ball", 20, 20)
         self.max_height = 10
         self.init_ball()
-        self.audio_effect = AudioEffect("src/audio/boing.mp3")
+        self.audio_effect_bounce = AudioEffect("src/audio/boing.mp3")
+        self.audio_effect_break = AudioEffect("src/audio/break.mp3")
         
     def start(self):
         self.boundaries = [10, Ngine.get_display()[0] - 10]
@@ -60,7 +61,7 @@ class Ball(Rectangle):
             self.direction_y*=-1
             self.direction_x = 2*(self.transform.get_position()[0] - other.transform.get_position()[0])/other.width
             self.speed+=0.1
-            self.audio_effect.play()
+            self.audio_effect_bounce.play()
 
 
 
@@ -75,6 +76,7 @@ class Brick(Rectangle):
         global n
         if (isinstance(other, Ball)):
             Ngine.destroy(self)
+            other.audio_effect_break.play()
             other.direction_y*=-1
             if (len(Ngine.get_gameobjects_by_class(Brick)) == 0):
                 # Winning procedure
