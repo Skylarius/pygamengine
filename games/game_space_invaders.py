@@ -2,6 +2,7 @@ import pygame
 import context
 from pygamengine import *
 import time
+from pygamengine.components.audio import AudioListener, AudioEffect
 from pygamengine.event import EventSystem
 from pygamengine.custom_events import ObjectDeleted, GameObjectData
 
@@ -21,6 +22,7 @@ class Ship(GameObject):
         Ngine.create_new_gameobject(self.bullet)
         self.bullet.enabled = False
         self.set_collision(True)
+        self.audio_listener = Ngine.add_new_component(AudioListener(), self)
 
     def tick(self):
         if Input().get_key("a") and self.transform.get_position()[0] > self.boundaries[0]: 
@@ -34,6 +36,7 @@ class Ship(GameObject):
         if not self.bullet.enabled:
             self.bullet.enabled = True
             self.bullet.transform.set_position(self.transform.get_position())
+            self.bullet.audio_effect.play()
     
     def on_collision(self, other: GameObject):
         if other.name == "alien":
@@ -56,6 +59,7 @@ class Bullet(GameObject):
         self.sprite ="src/sprites/bullet.png"
         self.speed = 15
         self.ignore_collisions_with_class(Ship)
+        self.audio_effect = AudioEffect("src/audio/shot_laser.mp3")
     
     def start(self):
         self.set_collision(True)
@@ -92,6 +96,7 @@ class Alien(GameObject):
         self.time_counter = time.perf_counter()
         Alien.aliens_start_count += 1
         self.ignore_collisions_with_class(Alien)
+        self.audio_effect = AudioEffect("src/audio/hurt.mp3")
 
     def start(self):
         Alien.boundaries = (30, Ngine.get_display()[0] - 30)
@@ -117,7 +122,8 @@ class Alien(GameObject):
         if count > 0:
             t = count/Alien.aliens_start_count
             x0 = 0.03
-            Alien.time_to_move = x0 + t * (Alien.time_to_move - x0) 
+            Alien.time_to_move = x0 + t * (Alien.time_to_move - x0)
+        self.audio_effect.play()
 
 
 if __name__ == "__main__":
