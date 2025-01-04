@@ -63,7 +63,7 @@ class AudioBackgroundMusic(AudioSource):
         if self.source:
             pygame.mixer.music.unload()
     
-    def play(self, time: float = 0, loops: int = -1, fade_ms: int = 0):
+    def play(self, time: float = 0, loops: int = 0, fade_ms: int = 0):
         pygame.mixer.music.play(start=time, loops=loops, fade_ms=fade_ms)
     
     def pause(self):
