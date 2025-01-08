@@ -36,7 +36,7 @@ class Ship(GameObject):
         if not self.bullet.enabled:
             self.bullet.enabled = True
             self.bullet.transform.set_position(self.transform.get_position())
-            self.bullet.audio_effect.play()
+            self.bullet.audio_effect.play_spatial_sound(self.transform.get_position()[0])
     
     def on_collision(self, other: GameObject):
         if other.name == "alien":
@@ -59,7 +59,7 @@ class Bullet(GameObject):
         self.sprite ="src/sprites/bullet.png"
         self.speed = 15
         self.ignore_collisions_with_class(Ship)
-        self.audio_effect = AudioEffect("src/audio/shot_laser.mp3")
+        self.audio_effect = AudioEffect("src/audio/shot_laser.mp3", transform=self.transform)
     
     def start(self):
         self.set_collision(True)

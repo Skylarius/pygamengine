@@ -1,5 +1,6 @@
 import pygame
 from .audio_listener import AudioListener, SpatialAudioClip
+from pygamengine.transform import Transform
 
 class AudioSource:
     def __init__(self, source_path: str, volume: float = 1):
@@ -18,10 +19,11 @@ class AudioSource:
 class AudioEffect(AudioSource):
     '''AudioEffect is a class that represents a sound effect that can be played once.
     Without an AudioListener attached elsewhere as a component, the sound will not be played'''
-    def __init__(self, source_path, volume = 1):
+    def __init__(self, source_path, volume = 1, transform: Transform = None):
         super().__init__(source_path, volume)
         self.source = pygame.mixer.Sound(source_path)
         self.source.set_volume(volume)
+        self.transform = transform
     
     def load(self, source_path):
         self.source_path = source_path
@@ -34,12 +36,23 @@ class AudioEffect(AudioSource):
     def play(self):
         AudioListener().request_play_sound(SpatialAudioClip(self.source))
     
-    def play_spatial_sound(self, position_x: float):
+    def play_spatial_sound(self, left=-1, right=-1):
         '''
-        DOESN'T WORK. Pygame doesn't support multichannel audio temporarily
+        Plays a sound on left and right speaker considering emitter position.
+        
+        Parameters:
+        left (float): Volume to override the left speaker.
+        right (float): Volume to override the right speaker.
         '''
         from pygamengine.engine import PyGameNgine
         center_x = PyGameNgine().get_display()[0]*0.5
+        if left >= 0 and right >=0:
+            AudioListener().request_play_sound(SpatialAudioClip(self.source, left, right))
+            return
+        if not self.transform:
+            self.play()
+            return
+        position_x = self.transform.get_position()[0]
         volume = self.source.get_volume()
         volume_right = (1 if position_x > center_x else position_x/center_x)*volume
         volume_left = (1 if position_x < center_x else 2 - position_x/center_x)*volume
