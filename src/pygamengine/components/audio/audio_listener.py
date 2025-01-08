@@ -28,7 +28,6 @@ class AudioListener(Component, metaclass=Singleton):
         self.__is_coroutine_on = False
 
     def request_play_sound(self, spatial_sound: SpatialAudioClip):
-        #TODO: to be improved with a queue of sounds to play
         if self.enabled:
             self.audio_queue.append(spatial_sound)
             if len(self.audio_queue) > self.max_audio_queue_length:
@@ -44,6 +43,7 @@ class PlayAudioCoroutine(Coroutine):
         super().__init__()
         self.listener = AudioListener()
         self.listener.__is_coroutine_on = True
+        self.r = 1
     
     def execute(self) -> Generator:
         while len(self.listener.audio_queue):
@@ -51,8 +51,7 @@ class PlayAudioCoroutine(Coroutine):
             channel = pygame.mixer.find_channel()
             if channel:
                 channel.play(spatial_sound.sound)
-                # channel.set_volume(spatial_sound.left_speaker_volume, spatial_sound.right_speaker_volume) # DOESN'T WORK YET
-                channel.set_volume(spatial_sound.left_speaker_volume)
+                channel.set_volume(spatial_sound.left_speaker_volume, spatial_sound.right_speaker_volume)
             yield None
         self.listener.__is_coroutine_on = False
 

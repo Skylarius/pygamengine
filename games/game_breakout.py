@@ -28,8 +28,8 @@ class Ball(Rectangle):
         self.max_height = 10
         self.init_ball()
         self.audio_effect_bounce = AudioEffect("src/audio/boing.mp3")
-        self.audio_effect_break = AudioEffect("src/audio/break.mp3")
-        self.audio_effect_death = AudioEffect("src/audio/hurt.mp3")
+        self.audio_effect_break = AudioEffect("src/audio/break.mp3", transform=self.transform)
+        self.audio_effect_death = AudioEffect("src/audio/hurt.mp3", transform=self.transform)
         
     def start(self):
         self.boundaries = [10, Ngine.get_display()[0] - 10]
@@ -51,7 +51,7 @@ class Ball(Rectangle):
         self.move(self.speed*self.direction_x, self.speed*self.direction_y)
 
         if self.transform.get_position()[1] > Ngine.get_display()[1]:
-            self.audio_effect_death.play()
+            self.audio_effect_death.play_spatial_sound()
             self.transform.set_position((-100,-100))
             self.speed = 0
             RunAfterSeconds(2, self.init_ball)
@@ -78,7 +78,7 @@ class Brick(Rectangle):
         global n
         if (isinstance(other, Ball)):
             Ngine.destroy(self)
-            other.audio_effect_break.play()
+            other.audio_effect_break.play_spatial_sound()
             other.direction_y*=-1
             if (len(Ngine.get_gameobjects_by_class(Brick)) == 0):
                 # Winning procedure
