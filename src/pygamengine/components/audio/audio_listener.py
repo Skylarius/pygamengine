@@ -51,7 +51,8 @@ class PlayAudioCoroutine(Coroutine):
             channel = pygame.mixer.find_channel()
             if channel:
                 channel.play(spatial_sound.sound)
-                channel.set_volume(spatial_sound.left_speaker_volume, spatial_sound.right_speaker_volume)
+                # channel.set_volume(spatial_sound.left_speaker_volume, spatial_sound.right_speaker_volume) # DOESN'T WORK YET
+                channel.set_volume(spatial_sound.left_speaker_volume)
             yield None
         self.listener.__is_coroutine_on = False
 
