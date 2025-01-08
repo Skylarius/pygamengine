@@ -9,3 +9,7 @@ class ComponentNotFoundError(Exception):
 class ConstructionOrderError(Exception):
     def __init__(self, *args: object) -> None:
         super().__init__(*args)
+
+class DisplayError(Exception):
+    def __init__(self, *args: object) -> None:
+        super().__init__(*args)
