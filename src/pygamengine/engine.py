@@ -8,7 +8,7 @@ from .event import EventSystem
 from .custom_events import ColliderEnabledChangedData, ColliderEnabledChangedEventType, ObjectLayerUpdated, CoroutineEnd, VideoResize
 from .custom_events import NewObjectCreated, ObjectDeleted, ObjectStarted, ComponentAddedToObject, GameObjectData, ComponentData, EventData
 from .components import Component
-from .exceptions import GameObjectNotFoundError, ComponentNotFoundError
+from .exceptions import GameObjectNotFoundError, ComponentNotFoundError, DisplayError
 from .input import Input
 
 import pygame
@@ -183,6 +183,7 @@ class PyGameNgine(metaclass=Singleton):
         self.__is_display_set = False
         self.__is_running = False
         self.__objects_instanced_before_running = list[GameObject]()
+        self.__display = None
 
         # Deprecated, do not use it
         self.display = (1280, 720)
@@ -223,6 +224,8 @@ class PyGameNgine(metaclass=Singleton):
         self.__is_display_set = True
     
     def get_display(self):
+        if not self.__display:
+            raise DisplayError("Display not set at function call. Tip: don't call it on object's __init__() if you didn't explicitly use set_display(). Use start() instead.")
         return self.__display
     
     def set_background(self, background: Background):
@@ -483,6 +486,8 @@ class PyGameNgine(metaclass=Singleton):
                     self.__is_running = False
                 if event.type == VIDEORESIZE:
                     pygame.display.update(self.__background.get_rect())
+                    for pygameobject in self.__pygameobjects:
+                        pygameobject.mark_as_to_update
                     VideoResize(event.dict["size"])
                 
             # Handle keys input:

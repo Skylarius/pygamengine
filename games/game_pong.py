@@ -15,8 +15,11 @@ class Player(PongObject):
     def __init__(self) -> None:
         super().__init__("player", 50, 150)
         self.speed = 10
-        self.transform.set_position((50, int(Ngine.get_display()[1]/2)))
     
+    def start(self):
+        super().start()
+        self.transform.set_position((50, int(Ngine.get_display()[1]/2)))
+        
     
     def tick(self):
         if Input().get_key(Input.W) and self.transform.get_position()[1] > self.boundaries[0]:
@@ -28,6 +31,9 @@ class Player(PongObject):
 class Ball(PongObject):
     def __init__(self) -> None:
         super().__init__("ball", 50, 50)
+    
+    def start(self):
+        super().start()
         self.init_ball()
     
     def init_ball(self):
@@ -63,6 +69,9 @@ class Opponent(PongObject):
     def __init__(self) -> None:
         super().__init__("opponent", 50, 150)
         self.speed = 8
+    
+    def start(self):
+        super().start()
         self.transform.set_position((Ngine.get_display()[0] - 50, int(Ngine.get_display()[1]/2)))
     
     def tick(self):
@@ -95,7 +104,7 @@ class Score(Text):
 
 if __name__ == "__main__":
     Ngine.set_caption("Pong")
-    Ngine.set_display(1920,1080)
+    #Ngine.set_display(1920,1080)
     Ngine.create_new_gameobject(Player())
     Ngine.create_new_gameobject(Opponent())
     Ngine.create_new_gameobject(Ball())
