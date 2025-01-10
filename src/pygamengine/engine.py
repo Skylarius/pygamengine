@@ -15,7 +15,7 @@ import pygame
 from pygame.locals import *
 import sys
 from .design_patterns import Singleton
-from .coroutines import CoroutineSystem
+from .coroutines import CoroutineSystem, WaitSeconds, Coroutine
 import logging
 from threading import Thread
 from .caches import SpriteCache
@@ -368,6 +368,10 @@ class PyGameNgine(metaclass=Singleton):
     
     def __get_image_from_sprite_path(self, sprite_path) -> pygame.Surface:
         return self.sprite_cache.load_sprite(sprite_path)
+    
+    def refresh_all_objects(self):
+        for pygameobject in self.__pygameobjects:
+            pygameobject.gameobject.transform.force_update()
         
     def create_new_gameobject(self, gameobject: GameObject) -> PygameObject:
         if not self.__is_display_set:
@@ -486,8 +490,7 @@ class PyGameNgine(metaclass=Singleton):
                     self.__is_running = False
                 if event.type == VIDEORESIZE:
                     pygame.display.update(self.__background.get_rect())
-                    for pygameobject in self.__pygameobjects:
-                        pygameobject.mark_as_to_update
+                    PyGameNgine().refresh_all_objects()
                     VideoResize(event.dict["size"])
                 
             # Handle keys input:
@@ -495,6 +498,5 @@ class PyGameNgine(metaclass=Singleton):
 
             self.__clock.tick(self.tick_time)
             # pygame.event.pump() # process event queue
-
 
 Ngine = PyGameNgine()
