@@ -8,14 +8,14 @@ from .event import EventSystem
 from .custom_events import ColliderEnabledChangedData, ColliderEnabledChangedEventType, ObjectLayerUpdated, CoroutineEnd, VideoResize
 from .custom_events import NewObjectCreated, ObjectDeleted, ObjectStarted, ComponentAddedToObject, GameObjectData, ComponentData, EventData
 from .components import Component
-from .exceptions import GameObjectNotFoundError, ComponentNotFoundError
+from .exceptions import GameObjectNotFoundError, ComponentNotFoundError, DisplayError
 from .input import Input
 
 import pygame
 from pygame.locals import *
 import sys
 from .design_patterns import Singleton
-from .coroutines import CoroutineSystem
+from .coroutines import CoroutineSystem, WaitSeconds, Coroutine
 import logging
 from threading import Thread
 from .caches import SpriteCache
@@ -180,9 +180,13 @@ class PyGameNgine(metaclass=Singleton):
         self.__clock = pygame.time.Clock()
         self.__input = Input()
         # flags = FULLSCREEN | DOUBLEBUF
-        
-        self.set_display(1280, 720)
-        self.set_background_color(0)
+        self.__is_display_set = False
+        self.__is_running = False
+        self.__objects_instanced_before_running = list[GameObject]()
+        self.__display = None
+
+        # Deprecated, do not use it
+        self.display = (1280, 720)
 
         # Start CoroutineSystem
         self.__coroutine_system = CoroutineSystem()
@@ -191,6 +195,9 @@ class PyGameNgine(metaclass=Singleton):
         self.sprite_cache = SpriteCache()
 
         self.setup_event_system()
+    
+    def set_caption(self, caption: str):
+        pygame.display.set_caption(caption)
     
     def set_display(self, x: int, y: int, color: pygame.Color = 0, in_flags: int = 0, fullscreen: bool = False, resizable: bool = True, scaled: bool = True, vsync: bool = True):
         # Create The Backgound
@@ -207,19 +214,30 @@ class PyGameNgine(metaclass=Singleton):
         vsync_value = 0 if not vsync else 1
         # flags = FULLSCREEN | DOUBLEBUF
         self.display = x, y
+        self.__display = x, y
         self.__display_flags = flags
         self.__display_vsync = vsync_value
-        self.__screen = pygame.display.set_mode(self.display, flags, 16, vsync=vsync_value)
+        self.__screen = pygame.display.set_mode(self.__display, flags, 16, vsync=vsync_value)
         self.__background = pygame.Surface(self.__screen.get_size())
         r = self.__background.get_rect()
         self.__background.convert()
+        self.__is_display_set = True
+    
+    def get_display(self):
+        if not self.__display:
+            raise DisplayError("Display not set at function call. Tip: don't call it on object's __init__() if you didn't explicitly use set_display(). Use start() instead.")
+        return self.__display
     
     def set_background(self, background: Background):
-        self.__background.blit(pygame.image.load(background.get_path(self.display)), (0,0))
+        self.__background.blit(pygame.image.load(background.get_path(self.__display)), (0,0))
         self.__background.convert()
     
     def set_background_color(self, color: pygame.Color):
         self.__background.fill(color)
+
+    def setup_default_display(self):
+        self.set_display(1280, 720)
+        self.set_background_color(0)
     
     def setup_event_system(self):
         event_system = EventSystem()
@@ -285,8 +303,7 @@ class PyGameNgine(metaclass=Singleton):
 
     
     def game_over(self):
-        pygame.quit()
-        sys.exit()
+        pygame.event.post(pygame.event.Event(QUIT))
     
     def get_screen(self) -> pygame.Surface:
         return self.__screen
@@ -351,8 +368,14 @@ class PyGameNgine(metaclass=Singleton):
     
     def __get_image_from_sprite_path(self, sprite_path) -> pygame.Surface:
         return self.sprite_cache.load_sprite(sprite_path)
+    
+    def refresh_all_objects(self):
+        for pygameobject in self.__pygameobjects:
+            pygameobject.gameobject.transform.force_update()
         
     def create_new_gameobject(self, gameobject: GameObject) -> PygameObject:
+        if not self.__is_display_set:
+            self.setup_default_display()
         additional_gameobjects_to_create = []
         image = pygame.Surface((1,1))
         if isinstance(gameobject, Rectangle):
@@ -378,7 +401,10 @@ class PyGameNgine(metaclass=Singleton):
         if self.__all_sprites:
             self.__all_sprites.add(pygameobject)
         NewObjectCreated(gameobject)
-        ObjectStarted(gameobject)
+        if Ngine.__is_running:
+            ObjectStarted(gameobject)
+        else:
+            self.__objects_instanced_before_running.append(gameobject)
         logging.debug(f"+Created {gameobject}")
         for g in additional_gameobjects_to_create:
             Ngine.create_new_gameobject(g)
@@ -411,7 +437,7 @@ class PyGameNgine(metaclass=Singleton):
             ObjectLayerUpdated(pygameobject.gameobject)         
     
     def is_in_display(self, position: tuple[2]):
-        return 0 < position[0] < self.display[0] and 0 < position[1] < self.display[1]
+        return 0 < position[0] < self.__display[0] and 0 < position[1] < self.__display[1]
     
     def add_new_component(self, component: Component, gameobject: GameObject):
         pygameobject = self.__get_pygameobject(gameobject)
@@ -425,6 +451,11 @@ class PyGameNgine(metaclass=Singleton):
     def run_engine(self):
         # Prepare dirty sprites
         self.__all_sprites = pygame.sprite.LayeredDirty(self.__pygameobjects)
+
+        # Execute start on all objects instanced before running
+        for g in self.__objects_instanced_before_running:
+            ObjectStarted(g)
+        self.__objects_instanced_before_running.clear()
         
         # Display background
         self.__all_sprites.clear(self.__screen, self.__background)
@@ -433,8 +464,8 @@ class PyGameNgine(metaclass=Singleton):
             pygameobject.rect.size = pygameobject.image.get_size()
         
         # Start infinite loop
-        running = True
-        while running:
+        self.__is_running = True
+        while self.__is_running:
             # Execute Start and Tick (now using DirtySprite update function)
             self.__all_sprites.update()
             
@@ -456,9 +487,10 @@ class PyGameNgine(metaclass=Singleton):
             # Update
             for event in pygame.event.get():
                 if event.type == QUIT:
-                    running = False
+                    self.__is_running = False
                 if event.type == VIDEORESIZE:
                     pygame.display.update(self.__background.get_rect())
+                    PyGameNgine().refresh_all_objects()
                     VideoResize(event.dict["size"])
                 
             # Handle keys input:
@@ -466,6 +498,5 @@ class PyGameNgine(metaclass=Singleton):
 
             self.__clock.tick(self.tick_time)
             # pygame.event.pump() # process event queue
-
 
 Ngine = PyGameNgine()
