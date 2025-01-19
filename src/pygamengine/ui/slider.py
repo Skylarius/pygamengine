@@ -21,6 +21,7 @@ class SliderIndicator(UIElement):
         self.indicator_image = image
         self.state = NONE
         self.slider: 'Slider' = slider
+        self.dragging = False  # Flag to track the dragging state
     
     def construct(self):
         self.current_image = self.indicator_image
@@ -32,32 +33,76 @@ class SliderIndicator(UIElement):
 
         in_button_area: bool = x - size_x/2 < mousex < x + size_x/2 and y - size_y/2 < mousey < y + size_y/2
         
+        # If mouse is over the indicator and the button is pressed, start dragging
         if in_button_area and self.__input.get_mouse_pressed()[0]:
             self.state = PRESSED
+            self.dragging = True  # Start dragging
             return
+        # When the mouse is released, finalize the slider value
         if self.state == PRESSED and not self.__input.get_mouse_pressed()[0]:
             self.state = NONE
-            return
+            if self.dragging:
+                self.finalize_slider_value()  # Calculate and finalize the slider value
+            self.dragging = False  # Stop dragging
+
+    def move_indicator_to_mouse(self, mousex: int, mousey: int):
+        pos = self.transform.get_position()
+        slider_pos_x, slider_pos_y = self.slider.transform.get_position()
+        
+        # Move the indicator within the slider bounds (horizontal or vertical)
+        if self.slider.slider_type == SliderType.Horizontal:
+            slider_min_x = slider_pos_x - self.slider.width / 2
+            slider_max_x = slider_pos_x + self.slider.width / 2
+            pos_x = max(slider_min_x, min(mousex, slider_max_x))  # Limit position within bounds
+            new_pos = (pos_x, pos[1])
+        elif self.slider.slider_type == SliderType.Vertical:
+            slider_min_y = slider_pos_y + self.slider.height / 2
+            slider_max_y = slider_pos_y - self.slider.height / 2
+            pos_y = min(slider_min_y, max(mousey, slider_max_y))  # Limit position within bounds
+            new_pos = (pos[0], pos_y)
+
+        self.transform.set_position(new_pos)
+    
+    def finalize_slider_value(self):
+        pos = self.transform.get_position()
+        slider_pos_x, slider_pos_y = self.slider.transform.get_position()
+        
+        # Calculate the final slider value based on the indicator position
+        if self.slider.slider_type == SliderType.Horizontal:
+            slider_min_x = slider_pos_x - self.slider.width / 2
+            slider_max_x = slider_pos_x + self.slider.width / 2
+            # Calculate proportional value based on position
+            t = (pos[0] - slider_min_x) / (slider_max_x - slider_min_x)
+            value = self.slider.min_value + t * (self.slider.max_value - self.slider.min_value)
+            
+            # Round value to the nearest step (up or down)
+            if self.slider.step > 0:
+                value = round(value / self.slider.step) * self.slider.step
+
+            # Set the final slider value and update the indicator position accordingly
+            self.slider.set_value(value)
+            self.slider.update_indicator_position_with_value(value)
+
+        elif self.slider.slider_type == SliderType.Vertical:
+            slider_min_y = slider_pos_y + self.slider.height / 2
+            slider_max_y = slider_pos_y - self.slider.height / 2
+            # Calculate proportional value based on position
+            t = (slider_min_y - pos[1]) / (slider_min_y - slider_max_y)
+            value = self.slider.min_value + t * (self.slider.max_value - self.slider.min_value)
+
+            # Round value to the nearest step (up or down)
+            if self.slider.step > 0:
+                value = round(value / self.slider.step) * self.slider.step
+
+            # Set the final slider value and update the indicator position accordingly
+            self.slider.set_value(value)
+            self.slider.update_indicator_position_with_value(value)
     
     def tick(self):
         self.state_machine()
-        if self.state == PRESSED:
-            pos = self.transform.get_position()
-            mouse_x, mouse_y = self.__input.get_mouse_position()
-            slider_pos_x, slider_pos_y = self.slider.transform.get_position()
-            if self.slider.slider_type == SliderType.Horizontal:
-                slider_min_x = slider_pos_x - self.slider.width/2
-                slider_max_x =  slider_pos_x + self.slider.width/2
-                pos_x = max(slider_min_x, min(mouse_x, slider_max_x)) # clamp
-                new_pos = pos_x, pos[1]
-            elif self.slider.slider_type == SliderType.Vertical:
-                slider_min_y = slider_pos_y + self.slider.height/2
-                slider_max_y =  slider_pos_y - self.slider.height/2 
-                pos_y = min(slider_min_y, max(mouse_y, slider_max_y)) # clamp
-                new_pos = pos[0], pos_y
-            self.transform.set_position(new_pos)
-            self.slider.update_value_with_indicator_position(self.transform.get_position())
-                
+        if self.dragging:
+            mousex, mousey = self.__input.get_mouse_position()
+            self.move_indicator_to_mouse(mousex, mousey)  # Move the indicator continuously during dragging
 
 class Slider(UIElement):
 
@@ -136,8 +181,9 @@ class Slider(UIElement):
         elif self.slider_type == SliderType.Vertical:
             t = (-position[1] + (self.transform.get_position()[1] + self.height/2)) / self.height    
         value = self.min_value + t*(self.max_value - self.min_value)
+        # Round the value according to the step
         if self.step > 0:
-            value = int(value / self.step) * self.step
+            value = round(value / self.step) * self.step
             self.update_indicator_position_with_value(value)
         if value != self.old_value:
             self.set_value(value)
@@ -151,10 +197,6 @@ class Slider(UIElement):
         elif self.slider_type == SliderType.Vertical:
             indicator_pos_y = (pos[1] + self.height/2) - t* self.height
             self.indicator.set_position((pos[0], indicator_pos_y))
-    
+
     def tick(self):
         self.value = self.__value
-    
-    def on_slider_change(self, new_value: float):
-        pass
-        
