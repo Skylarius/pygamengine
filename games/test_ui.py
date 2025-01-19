@@ -19,13 +19,16 @@ class MovingButton(Button):
     def tick(self):
         super().tick()
         pos = self.get_position()
-        if pos[0] > Ngine.display[0] - self.width:
+        if pos[0] > Ngine.get_display()[0] - self.width:
             self.direction = -1
         if pos[0] < 0:
             self.direction = 1
         self.set_position_with_children(Transform.get_vectors_sum(self.get_position(),(self.direction * self.speed,0)))
 
 if __name__ == "__main__":
+    Ngine.set_caption("TEST UI")
+    #Ngine.set_display(1920,1080)
+    
     # Create simple button
     button = Button("b", (30, 30), size=(200,100), anchor=Anchor.TOP_LEFT)
     button.count = 0
@@ -98,27 +101,28 @@ if __name__ == "__main__":
     # Place panel with 4 text on corners
     pos = (textpanel.get_position()[0] + textpanel.width + 30, 30)
     bigpanel = Panel("mybigpanel", pos, 
-        (Ngine.display[0] - 30 - pos[0], Ngine.display[1] - 30 - pos[1]), (255,0,255), anchor=Anchor.TOP_LEFT, border=30, border_color=(0,0,255)
+        (Ngine.get_display()[0] - 30 - pos[0], Ngine.get_display()[1] - 30 - pos[1]), (255,0,255), anchor=Anchor.TOP_LEFT, border=30, border_color=(0,0,255)
     )
     Ngine.create_new_gameobject(bigpanel)
     Ngine.create_new_gameobject(Text("txt_tl", bigpanel.get_position_with_anchor(Anchor.TOP_LEFT), text="TL"))
     Ngine.create_new_gameobject(Text("txt_tr", bigpanel.get_position_with_anchor(Anchor.TOP_RIGHT), text="TR"))
     Ngine.create_new_gameobject(Text("txt_bl", bigpanel.get_position_with_anchor(Anchor.BOTTOM_LEFT), text="BL"))
     Ngine.create_new_gameobject(Text("txt_br", bigpanel.get_position_with_anchor(Anchor.BOTTOM_RIGHT), text="BR"))
-    Ngine.create_new_gameobject(Text("txt_top_left", bigpanel.transform.get_position(), text="*TopLeft", anchor=Anchor.TOP_LEFT))
-    Ngine.create_new_gameobject(Text("txt_top_right", bigpanel.transform.get_position(), text="TopRight*", anchor=Anchor.TOP_RIGHT))
-    Ngine.create_new_gameobject(Text("txt_bottom_left", bigpanel.transform.get_position(), text="_BottomLeft", anchor=Anchor.BOTTOM_LEFT))
-    Ngine.create_new_gameobject(Text("txt_bottom_right", bigpanel.transform.get_position(), text="BottomRight_", anchor=Anchor.BOTTOM_RIGHT))
+    Ngine.create_new_gameobject(Text("txt_top_left", bigpanel.transform.get_position(), text="*TopLeft", anchor=Anchor.TOP_LEFT, font_size=16))
+    Ngine.create_new_gameobject(Text("txt_top_right", bigpanel.transform.get_position(), text="TopRight*", anchor=Anchor.TOP_RIGHT, font_size=16))
+    Ngine.create_new_gameobject(Text("txt_bottom_left", bigpanel.transform.get_position(), text="_BottomLeft", anchor=Anchor.BOTTOM_LEFT,font_size=16))
+    Ngine.create_new_gameobject(Text("txt_bottom_right", bigpanel.transform.get_position(), text="BottomRight_", anchor=Anchor.BOTTOM_RIGHT, font_size=16))
 
     # Create Slider
     slider_horizontal = Slider("slider_h", Transform.get_vectors_sum(moving_button.get_position(),(0, moving_button.height + 30)),
-        Anchor.TOP_LEFT, start_value=15.5, max_value=14, min_value=12, step=0.1
+        Anchor.TOP_LEFT, start_value=12.5, max_value=14, min_value=9, step=0.1
     )
 
     Ngine.create_new_gameobject(slider_horizontal)   
 
     def change_slider_horizontal_text(new_value: float):
         text_slider_horizontal.set_update(f"Slider: {new_value:.2f}")
+        text_slider_horizontal.set_font_size(int(new_value)*2)
     
     slider_horizontal.on_slider_change = change_slider_horizontal_text
 

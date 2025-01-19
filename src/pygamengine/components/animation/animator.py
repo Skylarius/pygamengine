@@ -1,6 +1,6 @@
 from pygamengine.components.animation import Animation, SINGLE_FRAME
 from pygamengine.components import Component
-from pygamengine.coroutines import WaitSeconds, Coroutine
+from pygamengine.coroutines import Coroutine
 from typing import Dict, TYPE_CHECKING, Generator
 from pygame import Surface
 
