@@ -71,15 +71,19 @@ if __name__ == "__main__":
     Ngine.create_new_gameobject(text2)
 
     # Create Panel
+    panel_sprite_folder = "src/sprites/ui/panels"
     textpanel = TextPanel(
         "mytextpanel", 
         "This text is inside this magical textpanel\nAnd this text is on another line", 
-        (panel.get_position()[0] + panel.width + 30, 30), 
-        (100, 200), (0,255,0), anchor=Anchor.TOP_LEFT
+        (panel.get_position()[0] + panel.width + 30, 30),
+        background=os.path.join(panel_sprite_folder, "panel.png"),
+        #(100, 200), (0,255,0), 
+        anchor=Anchor.TOP_LEFT
     )
     textpanel.text.color = (0,0,255)
     textpanel.text.max_lines = 10
     textpanel.text.remove_lines_on_top = True
+    setattr(textpanel, 'counter', 0) #used later in moving button click
     Ngine.create_new_gameobject(textpanel)
 
     # create moving button (defined above)
@@ -93,7 +97,8 @@ if __name__ == "__main__":
     def on_click_moving_button():
         x, y = random.randint(200, 1000), random.randrange(20, 600)
         textpanel.set_position_with_children((x,y))
-        textpanel.text.set_update(f"{textpanel.text.text}\nNew position ({x},{y})")
+        textpanel.text.set_update(f"{textpanel.text.text}\nP{textpanel.counter} = ({x},{y})")
+        textpanel.counter+=1
         textpanel.update_text_position()
 
     moving_button.on_click = on_click_moving_button
