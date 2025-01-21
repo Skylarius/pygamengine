@@ -20,8 +20,8 @@ class TextPanel(Panel):
         self.text.max_width = self.width - padding_left - padding_right
         self.children.append(self.text)
     
-    def start(self):
-        self.update_text_position()
+    # def start(self):
+    #     self.update_text_position()
     
     def update_text_position(self):
         self.set_position(self.transform.get_position())

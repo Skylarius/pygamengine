@@ -2,6 +2,7 @@ from pygamengine.gameobject import GameObject
 from pygamengine.transform import Transform
 from typing import Tuple, Union
 from enum import Enum
+from PIL import Image 
 
 class Anchor(Enum):
     CENTER = 0
@@ -11,18 +12,17 @@ class Anchor(Enum):
     BOTTOM_LEFT = 4
 
 class UIElement(GameObject):
-    def __init__(self, name: str, position: tuple[float, float], size: Union[tuple[float, float], None] = None, anchor: Anchor = Anchor.CENTER) -> None:
+    def __init__(self, name: str, position: tuple[float, float], size: Union[tuple[float, float], None] = None, anchor: Anchor = Anchor.CENTER, image_path: str = None) -> None:
         super().__init__(name)
         self.current_image = None
         self.collider = None
         self.anchor: Anchor = anchor
         if size == None:
-            self.width = None
-            self.height = None
+            self.get_size_from_image(image_path)
         else:
             self.width = size[0]
             self.height = size[1]
-        self.transform.set_position(position)
+        self.set_position(position)
         self.mark_as_to_update = False
         '''Use Ngine.update_draw_order to make it effective after updating'''
         self.draw_order: int = 1000
@@ -37,6 +37,16 @@ class UIElement(GameObject):
             for child in self.children:
                 ret_children.append(*child.get_children())
         return ret_children
+    
+    def get_size_from_image(self, image_path) -> tuple[float, float]:
+        if image_path is None:
+            raise Exception("Image path is None and no size was set. Please set a size for the UIElement or provide the image path.")
+        img = Image.open(image_path) 
+        # get width and height 
+        self.width = img.width 
+        self.height = img.height 
+
+
 
     def construct(self):
         pass
@@ -83,4 +93,5 @@ class UIElement(GameObject):
             c.move_with_children(*delta)
 
     def start(self):
-        self.set_position(self.transform.get_position())
+        pass
+        #self.set_position_with_children(self.transform.get_position())

@@ -70,6 +70,9 @@ class Text(UIElement):
 
     def construct(self):
         self.current_image = self.render_text()
+        self.mark_as_to_update = True
+        self.set_position(self.transform.get_position())
+        self.transform.force_update()
     
     def set_font_size(self, size: int):
         self.font = self.font.__class__(None, size)
@@ -144,3 +147,6 @@ class Text(UIElement):
     def set_update(self, text: str):
         self.text = text
         self.update_text()
+    
+    def start(self):
+        super().start()
