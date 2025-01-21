@@ -12,7 +12,7 @@ class Anchor(Enum):
     BOTTOM_LEFT = 4
 
 class UIElement(GameObject):
-    def __init__(self, name: str, position: tuple[float, float], size: Union[tuple[float, float], None] = None, anchor: Anchor = Anchor.CENTER, image_path: str = None) -> None:
+    def __init__(self, name: str, position: tuple[float, float], size: Union[tuple[float, float], None] = None, anchor: Anchor = Anchor.CENTER, image_path: Union[str, None] = None) -> None:
         super().__init__(name)
         self.current_image = None
         self.collider = None
