@@ -182,7 +182,6 @@ class PyGameNgine(metaclass=Singleton):
         # flags = FULLSCREEN | DOUBLEBUF
         self.__is_display_set = False
         self.__is_running = False
-        self.__objects_instanced_before_running = list[GameObject]()
         self.__display = None
 
         # Deprecated, do not use it
@@ -399,12 +398,10 @@ class PyGameNgine(metaclass=Singleton):
         pygameobject.rect.size = pygameobject.image.get_size()
         self.__pygameobjects.append(pygameobject)
         if self.__all_sprites:
-            self.__all_sprites.add(pygameobject)
+            self.__all_sprites.add(pygame.sprite.LayeredDirty(pygameobject))
         NewObjectCreated(gameobject)
         if Ngine.__is_running:
             ObjectStarted(gameobject)
-        else:
-            self.__objects_instanced_before_running.append(gameobject)
         logging.debug(f"+Created {gameobject}")
         for g in additional_gameobjects_to_create:
             Ngine.create_new_gameobject(g)
@@ -453,9 +450,9 @@ class PyGameNgine(metaclass=Singleton):
         self.__all_sprites = pygame.sprite.LayeredDirty(self.__pygameobjects)
 
         # Execute start on all objects instanced before running
-        for g in self.__objects_instanced_before_running:
-            ObjectStarted(g)
-        self.__objects_instanced_before_running.clear()
+        for pygameobject in self.__pygameobjects:
+            ObjectStarted(pygameobject.gameobject)
+            self.__all_sprites.change_layer(pygameobject, pygameobject.gameobject.draw_order)
         
         # Display background
         self.__all_sprites.clear(self.__screen, self.__background)
