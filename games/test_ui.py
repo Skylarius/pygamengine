@@ -66,7 +66,7 @@ if __name__ == "__main__":
     Ngine.create_new_gameobject(panel)
     # Create panel description text (to test positioning)
     text2 = Text("panel_description", Transform.get_vectors_sum(panel.get_position(), 
-        (0, panel.height + 30)), text="This one above is a panel", anchor=Anchor.TOP_LEFT, max_width=panel.width
+        (0, panel.height + 30)), text="/\ This one above is a panel", anchor=Anchor.TOP_LEFT, max_width=panel.width
     )
     Ngine.create_new_gameobject(text2)
 
@@ -93,7 +93,7 @@ if __name__ == "__main__":
     def on_click_moving_button():
         x, y = random.randint(200, 1000), random.randrange(20, 600)
         textpanel.set_position_with_children((x,y))
-        textpanel.text.set_update(f"{textpanel.text.text}\nNew position({x},{y})")
+        textpanel.text.set_update(f"{textpanel.text.text}\nNew position ({x},{y})")
         textpanel.update_text_position()
 
     moving_button.on_click = on_click_moving_button
@@ -133,8 +133,12 @@ if __name__ == "__main__":
     )
     Ngine.create_new_gameobject(text_slider_horizontal)
 
-    slider_vertical = Slider("slider_y", Transform.get_vectors_sum(slider_horizontal.get_position(),(0, 30)),
-        Anchor.TOP_LEFT, bar_size=(20, 150), slider_type=SliderType.Vertical,
+    slider_sprite_folder = "src/sprites/ui/sliders"
+    slider_vertical = Slider("slider_y", 
+        Transform.get_vectors_sum(slider_horizontal.get_position(),(0, 30)), Anchor.TOP_LEFT, 
+        bar_image=os.path.join(slider_sprite_folder, "slider_bar.png"), 
+        indicator_image=os.path.join(slider_sprite_folder, "slider_cursor.png"),
+        slider_type=SliderType.Vertical,
         max_value=100, min_value=10, start_value=20, step=20
     )
 

@@ -11,7 +11,8 @@ class Panel(UIElement):
             self, name: str, position: tuple[float, float] = (100,100), size: Union[tuple[float, float], None] = (100,100), 
             background: Union[str,tuple[int,int,int,int]] = (255,255,255,255),
             anchor=Anchor.CENTER, border=0, border_color = None) -> None:
-        super().__init__(name, position, size=size, anchor=anchor)
+        image_path = background if type(background) is str else None
+        super().__init__(name, position, size=size, anchor=anchor, image_path=image_path)
         self.background = background
         self.border = border
         self.border_color = border_color

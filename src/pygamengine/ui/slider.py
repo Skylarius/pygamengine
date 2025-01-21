@@ -118,7 +118,10 @@ class Slider(UIElement):
             min_value = 0, max_value = 10, start_value = 5, step = 0,
             slider_type: SliderType = SliderType.Horizontal
         ) -> None:
-        super().__init__(name, position, None, anchor)
+        image_path = bar_image if type(bar_image) is str else None
+        if image_path:
+            bar_size = None
+        super().__init__(name, position, bar_size, anchor, image_path=image_path)
         self.bar_image = bar_image
         self.bar_size = bar_size
         self.bar_color = bar_color
@@ -165,7 +168,7 @@ class Slider(UIElement):
         self.children.append(indicator)
 
     def start(self):
-        self.set_position(self.transform.get_position())
+        #self.set_position(self.transform.get_position())
         self.indicator.transform.set_position(self.transform.get_position())
         self.update_indicator_position_with_value(self.__value)
 

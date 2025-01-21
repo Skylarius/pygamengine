@@ -20,11 +20,9 @@ class Button(UIElement):
             selected_image: Union[str,tuple[int,int,int,int]] = (255,0,0,255),
             pressed_image: Union[str,tuple[int,int,int,int]] = (0,255,0,255),
             has_text: bool = True, anchor=Anchor.CENTER, initial_text: str = "button_text") -> None:
-        super().__init__(name, position, anchor=anchor)
+        image_path = unselected_image if type(unselected_image) is str else None
+        super().__init__(name, position, size=size, anchor=anchor, image_path=image_path)
         self.__input = Input()
-        if size:
-            self.width = size[0]
-            self.height = size[1]
         self.state = NONE
         self.old_state = NONE
         self.text_offset = (0,0)
@@ -113,6 +111,7 @@ class Button(UIElement):
             return
     
     def start(self):
-        self.set_position_with_children(self.transform.get_position())
+        super().start()
+
 
         
