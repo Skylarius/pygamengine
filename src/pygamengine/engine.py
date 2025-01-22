@@ -398,7 +398,7 @@ class PyGameNgine(metaclass=Singleton):
         pygameobject.rect.size = pygameobject.image.get_size()
         self.__pygameobjects.append(pygameobject)
         if self.__all_sprites:
-            self.__all_sprites.add(pygame.sprite.LayeredDirty(pygameobject))
+            self.__all_sprites.add(pygame.sprite.LayeredDirty(pygameobject, layer=pygameobject.gameobject.draw_order))
         NewObjectCreated(gameobject)
         if Ngine.__is_running:
             ObjectStarted(gameobject)
