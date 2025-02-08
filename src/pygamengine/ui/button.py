@@ -70,6 +70,8 @@ class Button(UIElement):
         print(f"Clicked on button {self.name}")
 
     def tick(self):
+        if not self._visible:  # If it is not visible, do not run the render cycle
+            return
         self.state_machine()
         self.update_image()
         # if self.text:
@@ -113,5 +115,12 @@ class Button(UIElement):
     def start(self):
         super().start()
 
+    @property
+    def visible(self):
+        return self._visible
+        
+    @visible.setter
+    def visible(self, value: bool):
+        self._visible = value
 
         
