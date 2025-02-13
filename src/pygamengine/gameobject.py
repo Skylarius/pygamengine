@@ -57,7 +57,11 @@ class GameObject:
             Transform.lerp(
                 self.transform.get_position(), position, t
             )
-        )        
+        )
+
+    def set_enabled(self, condition: bool = True):
+        self.enabled = condition
+        self.transform.force_update()
 
 class Rectangle(GameObject):
     def __init__(self, name: str, width=10, height=20, color=(240,240,240,255)) -> None:
