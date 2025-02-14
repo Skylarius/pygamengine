@@ -102,6 +102,11 @@ if __name__ == "__main__":
         textpanel.update_text_position()
 
     moving_button.on_click = on_click_moving_button
+
+    def on_click_button2():
+        moving_button.set_enabled(not moving_button.enabled)
+    
+    button2.on_click = on_click_button2
     
     # Place panel with 4 text on corners
     pos = (textpanel.get_position()[0] + textpanel.width + 30, 30)

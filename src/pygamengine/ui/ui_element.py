@@ -44,10 +44,13 @@ class UIElement(GameObject):
         img = Image.open(image_path) 
         # get width and height 
         self.width = img.width 
-        self.height = img.height 
+        self.height = img.height
 
-
-
+    def set_enabled(self, condition = True):
+        for c in self.children:
+            c.set_enabled(condition)
+        super().set_enabled(condition)
+    
     def construct(self):
         pass
 
