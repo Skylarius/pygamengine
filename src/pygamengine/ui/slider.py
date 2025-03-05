@@ -171,6 +171,10 @@ class Slider(UIElement):
         #self.set_position(self.transform.get_position())
         self.indicator.transform.set_position(self.transform.get_position())
         self.update_indicator_position_with_value(self.__value)
+    
+    def on_slider_change(self, value: float):
+        # Override this method to handle the slider value change
+        print(f"Slider {self.name} value changed to {value}")
 
     def set_value(self, value: float):
         self.__value = value
