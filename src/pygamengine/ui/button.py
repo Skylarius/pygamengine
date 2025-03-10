@@ -16,9 +16,9 @@ class Button(UIElement):
 
     def __init__(
             self, name: str, position: tuple[float, float] = (100,100), size: Union[tuple[float, float], None] = None, 
-            unselected_image: Union[str,tuple[int,int,int,int]] = (255,255,255,255),
-            selected_image: Union[str,tuple[int,int,int,int]] = (255,0,0,255),
-            pressed_image: Union[str,tuple[int,int,int,int]] = (0,255,0,255),
+            unselected_image: Union[str,tuple[int,int,int,int], pygame.Surface] = (255,255,255,255),
+            selected_image: Union[str,tuple[int,int,int,int], pygame.Surface] = (255,0,0,255),
+            pressed_image: Union[str,tuple[int,int,int,int], pygame.Surface] = (0,255,0,255),
             has_text: bool = True, anchor=Anchor.CENTER, initial_text: str = "button_text") -> None:
         image_path = unselected_image if type(unselected_image) is str else None
         super().__init__(name, position, size=size, anchor=anchor, image_path=image_path)
@@ -53,6 +53,13 @@ class Button(UIElement):
     def make_button_image(self, in_data: Union[str, tuple[int,int,int,int]]) -> pygame.Surface:
         if type(in_data) is str:
             image = Button.sprite_cache.load_sprite(in_data)
+            new_width, new_height = image.get_size()
+            if self.width is None or self.height is None:
+                self.width, self.height = new_width, new_height
+            else:
+                self.width, self.height = max(self.width, new_width), max(self.height, new_height)
+        elif isinstance(in_data, pygame.Surface):
+            image = in_data
             new_width, new_height = image.get_size()
             if self.width is None or self.height is None:
                 self.width, self.height = new_width, new_height
