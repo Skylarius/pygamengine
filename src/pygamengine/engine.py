@@ -303,7 +303,7 @@ class PyGameNgine(metaclass=Singleton):
 
     
     def game_over(self):
-        pygame.event.post(pygame.event.Event(QUIT))
+        self.__is_running = False
     
     def get_screen(self) -> pygame.Surface:
         return self.__screen
