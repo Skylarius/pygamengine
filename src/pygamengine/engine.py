@@ -182,6 +182,7 @@ class PyGameNgine(metaclass=Singleton):
         # flags = FULLSCREEN | DOUBLEBUF
         self.__is_display_set = False
         self.__is_running = False
+        self.__force_quit = False
         self.__display = None
 
         # Deprecated, do not use it
@@ -443,6 +444,12 @@ class PyGameNgine(metaclass=Singleton):
         c = pygameobject.add_component(component)
         ComponentAddedToObject(pygameobject, component)
         return c 
+    
+    def quit(self):
+        self.__is_running = False if not self.__force_quit else sys.exit(0)
+
+    def set_force_quit(self, value: bool):
+        self.__force_quit = value
 
 
     def run_engine(self):
@@ -484,7 +491,7 @@ class PyGameNgine(metaclass=Singleton):
             # Update
             for event in pygame.event.get():
                 if event.type == QUIT:
-                    self.__is_running = False
+                    self.quit()
                 if event.type == VIDEORESIZE:
                     pygame.display.update(self.__background.get_rect())
                     PyGameNgine().refresh_all_objects()
