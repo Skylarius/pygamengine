@@ -3,7 +3,6 @@ from .text import Text
 import pygame
 from pygamengine.input import Input
 from pygamengine.caches import SpriteCache
-import pygamengine
 from typing import Union
 
 NONE = 0
