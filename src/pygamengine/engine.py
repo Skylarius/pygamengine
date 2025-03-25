@@ -400,17 +400,21 @@ class PyGameNgine(metaclass=Singleton):
         if self.__all_sprites:
             self.__all_sprites.add(pygame.sprite.LayeredDirty(pygameobject, layer=pygameobject.gameobject.draw_order))
         NewObjectCreated(gameobject)
-        if Ngine.__is_running:
+        if self.__is_running:
             ObjectStarted(gameobject)
         logging.debug(f"+Created {gameobject}")
         for g in additional_gameobjects_to_create:
-            Ngine.create_new_gameobject(g)
+            self.create_new_gameobject(g)
         return pygameobject
         
     
     def destroy(self, gameobject: GameObject):
         pygameobject = self.__get_pygameobject(gameobject)
         if pygameobject != None:
+            if isinstance(gameobject, UIElement):
+                uielement: UIElement = gameobject
+                for child in uielement.children:
+                    self.destroy(child)
             self.__pygameobjects_marked_for_deletion.append(pygameobject)
             gameobject.on_destroy()
             ObjectDeleted(gameobject)
