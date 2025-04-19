@@ -448,6 +448,14 @@ class PyGameNgine(metaclass=Singleton):
         c = pygameobject.add_component(component)
         ComponentAddedToObject(pygameobject, component)
         return c 
+    
+    def is_point_overlapping_object(self, point: tuple[float, float], other: GameObject):
+        other_pygameobject = self.__get_pygameobject(other)
+        if other_pygameobject is None:
+            return False
+        rect1 = pygame.Rect(point[0], point[1], 1, 1)
+        rect2 = other_pygameobject.get_collision_rect()
+        return rect1.colliderect(rect2)
 
     def quit(self):
         self.__is_running = False if not self.__force_quit else sys.exit(0)
