@@ -23,16 +23,16 @@ class TextRenderer:
         self.lines: list[str] = []
 
     def insert_word(self, word: str):
-        word_formatted = f"{word}"
-        word_x, word_y = self.font.size(word_formatted)
-        self.line_spacing = max(self.line_spacing, word_y)
-        if self.width + word_x < self.max_width:
-            self.width += word_x
-            self.current_line_text += word_formatted
+        new_current_line = self.current_line_text + word
+        line_x, line_y = self.font.size(new_current_line)
+        self.line_spacing = max(self.line_spacing, line_y)
+        if line_x < self.max_width:
+            self.width = line_x
+            self.current_line_text = new_current_line
         else:
             self.make_new_line()
-            self.width = word_x
-            self.current_line_text = word_formatted
+            self.width = self.font.size(word)[0]
+            self.current_line_text = word
 
     def make_new_line(self):
         self.current_max_width = max(self.width, self.current_max_width)
