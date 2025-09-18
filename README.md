@@ -1,15 +1,16 @@
 # pygamengine
 
+[![Build](https://img.shields.io/badge/build-passing-brightgreen.svg)]()
 [![Contributors](https://img.shields.io/github/contributors/Skylarius/pygamengine)](https://github.com/Skylarius/pygamengine/graphs/contributors)
-[![Forks](https://img.shields.io/github/forks/Skylarius/pygamengine)](https://github.com/Skylarius/pygamengine/network/members)
 [![Issues](https://img.shields.io/github/issues/Skylarius/pygamengine)](https://github.com/Skylarius/pygamengine/issues)
-[![Stars](https://img.shields.io/github/stars/Skylarius/pygamengine)](https://github.com/Skylarius/pygamengine/stargazers)
 [![License](https://img.shields.io/github/license/Skylarius/pygamengine)](LICENSE)
 [![Last Commit](https://img.shields.io/github/last-commit/Skylarius/pygamengine)](https://github.com/Skylarius/pygamengine/commits)
 [![Pull Requests](https://img.shields.io/github/issues-pr/Skylarius/pygamengine)](https://github.com/Skylarius/pygamengine/pulls)
 [![Code Size](https://img.shields.io/github/languages/code-size/Skylarius/pygamengine)](https://github.com/Skylarius/pygamengine)
 [![Top Language](https://img.shields.io/github/languages/top/Skylarius/pygamengine)](https://github.com/Skylarius/pygamengine)
 [![Commit Activity](https://img.shields.io/github/commit-activity/m/Skylarius/pygamengine)](https://github.com/Skylarius/pygamengine/pulse)
+[![Forks](https://img.shields.io/github/forks/Skylarius/pygamengine)](https://github.com/Skylarius/pygamengine/network/members)
+[![Stars](https://img.shields.io/github/stars/Skylarius/pygamengine)](https://github.com/Skylarius/pygamengine/stargazers)
 
 
 
