@@ -1,17 +1,16 @@
 # pygamengine
 
-[![Build](https://img.shields.io/badge/build-passing-brightgreen.svg)]()
-[![Contributors](https://img.shields.io/github/contributors/Skylarius/pygamengine)](https://github.com/Skylarius/pygamengine/graphs/contributors)
-[![Issues](https://img.shields.io/github/issues/Skylarius/pygamengine)](https://github.com/Skylarius/pygamengine/issues)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Last Commit](https://img.shields.io/github/last-commit/Skylarius/pygamengine)](https://github.com/Skylarius/pygamengine/commits)
-[![Pull Requests](https://img.shields.io/github/issues-pr/Skylarius/pygamengine)](https://github.com/Skylarius/pygamengine/pulls)
-[![Code Size](https://img.shields.io/github/languages/code-size/Skylarius/pygamengine)](https://github.com/Skylarius/pygamengine)
-[![Top Language](https://img.shields.io/github/languages/top/Skylarius/pygamengine)](https://github.com/Skylarius/pygamengine)
-[![Commit Activity](https://img.shields.io/github/commit-activity/m/Skylarius/pygamengine)](https://github.com/Skylarius/pygamengine/pulse)
-[![Forks](https://img.shields.io/github/forks/Skylarius/pygamengine)](https://github.com/Skylarius/pygamengine/network/members)
-[![Stars](https://img.shields.io/github/stars/Skylarius/pygamengine)](https://github.com/Skylarius/pygamengine/stargazers)
-
+[![Build](https://img.shields.io/badge/build-passing-brightgreen.svg?style=for-the-badge)]()
+[![Contributors](https://img.shields.io/github/contributors/Skylarius/pygamengine?style=for-the-badge)](https://github.com/Skylarius/pygamengine/graphs/contributors)
+[![Issues](https://img.shields.io/github/issues/Skylarius/pygamengine?style=for-the-badge)](https://github.com/Skylarius/pygamengine/issues)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](LICENSE)
+[![Last Commit](https://img.shields.io/github/last-commit/Skylarius/pygamengine?style=for-the-badge)](https://github.com/Skylarius/pygamengine/commits)
+[![Pull Requests](https://img.shields.io/github/issues-pr/Skylarius/pygamengine?style=for-the-badge)](https://github.com/Skylarius/pygamengine/pulls)
+[![Code Size](https://img.shields.io/github/languages/code-size/Skylarius/pygamengine?style=for-the-badge)](https://github.com/Skylarius/pygamengine)
+[![Top Language](https://img.shields.io/github/languages/top/Skylarius/pygamengine?style=for-the-badge)](https://github.com/Skylarius/pygamengine)
+[![Commit Activity](https://img.shields.io/github/commit-activity/m/Skylarius/pygamengine?style=for-the-badge)](https://github.com/Skylarius/pygamengine/pulse)
+[![Forks](https://img.shields.io/github/forks/Skylarius/pygamengine?style=for-the-badge)](https://github.com/Skylarius/pygamengine/network/members)
+[![Stars](https://img.shields.io/github/stars/Skylarius/pygamengine?style=for-the-badge)](https://github.com/Skylarius/pygamengine/stargazers)
 
 
 A game engine to easily write games based on pygame
